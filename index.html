@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روانشناسی ورزشی</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1 class="logo">روانشناسی ورزشی</h1>
+            <ul>
+                <li><a href="#home">خانه</a></li>
+                <li><a href="#about">درباره ما</a></li>
+                <li><a href="#services">خدمات</a></li>
+                <li><a href="articles.html">مقالات آموزشی</a></li> <!-- 🔹 لینک جدید اضافه شد -->
+                <li><a href="#contact">تماس با ما</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="section hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h2>ذهن آرام، عملکرد برتر</h2>
+                <p>با روانشناسی ورزشی یاد بگیر چگونه ذهن خود را برای موفقیت در میدان مسابقه آماده کنی.</p>
+                <button onclick="scrollToSection('services')">مشاهده خدمات</button>
+            </div>
+            <div class="hero-images">
+                <img src="ravanshenasi.jpg" alt="روانشناسی ورزشی">
+                <img src="yoga.jpg" alt="یوگا و تمرکز ذهنی">
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="section">
+        <h2>درباره ما</h2>
+        <p>
+            ما تیمی از روانشناسان ورزشی هستیم که هدفمان ارتقاء سلامت ذهنی و عملکرد ورزشکاران است.
+            از آماتور تا حرفه‌ای، به شما کمک می‌کنیم تا با کنترل ذهن، بهترین نتایج را بگیرید.
+        </p>
+    </section>
+
+    <section id="services" class="section">
+        <h2>خدمات ما</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>مشاوره فردی</h3>
+                <p>جلسات خصوصی برای بهبود تمرکز، انگیزه و مدیریت استرس ورزشکاران.</p>
+            </div>
+            <div class="card">
+                <h3>کارگاه‌های گروهی</h3>
+                <p>آموزش مهارت‌های ذهنی برای تیم‌ها و گروه‌های ورزشی.</p>
+            </div>
+            <div class="card">
+                <h3>مقالات آموزشی</h3>
+                <p>مطالب علمی و کاربردی برای رشد ذهنی در دنیای ورزش.</p>
+                <a href="articles.html">مقاله ها</a>
+            </div>
+            <div class="card">
+                <h3>انواع ورزش های فردی و گروهی</h3>
+                <p>انواع ورزش های فردی و گروهی مثل شنا ، فوتبال ، رزمی ، بوکس و ...</p>
+                <a href="kindsofsports.html">ورزش ها</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="section contact">
+        <h2>تماس با ما</h2>
+        <form>
+            <label for="name">نام:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">ایمیل:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">پیام:</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+
+            <button type="submit">ارسال پیام</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 روانشناسی ورزشی | طراحی شده با 💜 برای ذهن‌های قوی</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
