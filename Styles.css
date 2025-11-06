@@ -273,3 +273,45 @@ footer {
         width: 90%;
     }
 }
+
+/* ✅ موبایل‌های خیلی کوچک */
+@media (max-width: 480px) {
+
+    nav ul li a {
+        font-size: 14px;
+        padding: 4px 6px;
+    }
+
+    .hero-text h2 {
+        font-size: 1.7rem;
+    }
+
+    .hero-text p {
+        font-size: 0.95rem;
+    }
+
+    .hero-text button {
+        width: 100%;
+        padding: 12px;
+        font-size: 15px;
+    }
+}
+
+/* ✅ صفحه‌نمایش‌های خیلی بزرگ (LCD, TV, 2K, 4K) */
+@media (min-width: 1400px) {
+
+    .hero-content {
+        max-width: 1300px;
+        margin: auto;
+    }
+
+    .hero-images img {
+        max-width: 380px;
+    }
+
+    .section {
+        max-width: 1300px;
+        margin: 60px auto;
+    }
+}
+
