@@ -6,7 +6,7 @@ from .models import User, CoachProfile, AthleteProfile
 @receiver(post_save, sender=User)
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        if instance.role == 'coach':
+        if instance.role == "coach":
             CoachProfile.objects.create(user=instance)
-        elif instance.role == 'athlete':
+        elif instance.role == "athlete":
             AthleteProfile.objects.create(user=instance)

@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Appointment(models.Model):
     full_name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
@@ -7,5 +8,5 @@ class Appointment(models.Model):
     time = models.TimeField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def str(self):
+    def __str__(self):
         return f"{self.full_name} - {self.date} {self.time}"
