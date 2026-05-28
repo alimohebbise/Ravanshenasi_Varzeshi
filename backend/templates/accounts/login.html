@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ورود به سایت</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  </head>
+  <body class="bg-light">
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="card shadow-sm">
+            <div class="card-body">
+              <h2 class="card-title mb-4">ورود به حساب کاربری</h2>
+              <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label class="form-label">نام کاربری</label>
+                  {{ form.username }}
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">رمز عبور</label>
+                  {{ form.password }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100">ورود</button>
+              </form>
+              {% if form.errors %}
+              <div class="alert alert-danger mt-3">نام کاربری یا رمز عبور اشتباه است.</div>
+              {% endif %}
+              <div class="mt-3 text-muted">
+                پس از ورود می‌توانید با توجه به نقش خود وارد داشبورد شوید.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

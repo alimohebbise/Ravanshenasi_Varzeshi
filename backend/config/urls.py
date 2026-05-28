@@ -21,6 +21,7 @@ from accounts.views import home, serve_html
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("accounts/", include(("accounts.urls", "accounts"), namespace="accounts")),
     path("api/", include("appointments.urls")),
     path("", home, name="home"),
     re_path(r'^(?P<path>.*\.html)$', serve_html),

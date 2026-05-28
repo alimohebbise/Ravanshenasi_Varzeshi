@@ -10,7 +10,28 @@
     />
     <link rel="stylesheet" href="css/styles.css" />
     <!-- فایل استایل مخصوص شما -->
-  </head>
+  
+    <style>
+      /* Lazy reveal images */
+      .card-img-top {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s ease, visibility .25s ease;
+        min-height: 180px;
+        background: #f2f2f2;
+        object-fit: cover;
+      }
+      .card:hover .card-img-top,
+      .card.touch-active .card-img-top,
+      .card:focus-within .card-img-top {
+        opacity: 1;
+        visibility: visible;
+      }
+      .card {
+        cursor: pointer;
+      }
+    </style>
+</head>
   <body id="page-top">
     <!-- Navbar -->
     <nav
@@ -58,10 +79,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="TamarkozZehni.jpg"
               class="card-img-top"
               alt="تمرکز ذهنی در ورزش"
-            />
+             data-src="TamarkozZehni.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">تمرکز ذهنی در ورزش حرفه‌ای</h5>
               <p class="card-text">
@@ -78,10 +98,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=60"
               class="card-img-top"
               alt="مدیریت استرس در ورزشکاران"
-            />
+             data-src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=60" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">مدیریت استرس در ورزشکاران</h5>
               <p class="card-text">
@@ -98,10 +117,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=60"
               class="card-img-top"
               alt="انگیزه ورزشی"
-            />
+             data-src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=60" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">انگیزه ورزشی را چطور حفظ کنیم؟</h5>
               <p class="card-text">
@@ -116,10 +134,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="park.png"
               class="card-img-top"
               alt="طبیعت، درمانگر خاموش ذهن"
-            />
+             data-src="park.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">طبیعت، درمانگر خاموش ذهن</h5>
               <p class="card-text">
@@ -135,10 +152,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\anxietysports.jpg"
                 class="card-img-top"
                 alt="اضطراب در ورزشکاران"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\anxietysports.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">اضطراب در ورزشکاران</h5>
                 <p class="card-text">
@@ -155,10 +171,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Focusonthemuscles1.jpg"
                 class="card-img-top"
                 alt="تمرکز روی عضلات در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Focusonthemuscles1.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">تمرکز روی عضلات در ورزش</h5>
                 <p class="card-text">
@@ -176,10 +191,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\bodymuscles.jpg"
                 class="card-img-top"
                 alt="تمرکز روی عضلات در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\bodymuscles.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">عضلات بدن</h5>
                 <p class="card-text">
@@ -196,10 +210,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Stretchingmovements.jpg"
                 class="card-img-top"
                 alt="حرکات کششی در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Stretchingmovements.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">حرکات کششی در ورزش</h5>
                 <p class="card-text">
@@ -216,10 +229,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\TamrinatDarki.jpg"
                 class="card-img-top"
                 alt="تمرینات درکی در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\TamrinatDarki.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">تمرینات درکی در ورزش</h5>
                 <p class="card-text">
@@ -236,10 +248,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Preventingsportsburnout.jpg"
                 class="card-img-top"
                 alt="پیشگیری از فرسودگی ورزشی"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Preventingsportsburnout.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">پیشگیری از فرسودگی ورزشی</h5>
                 <p class="card-text">
@@ -256,10 +267,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\excitement.jpg"
                 class="card-img-top"
                 alt="پیشگیری از فرسودگی ورزشی"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\excitement.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">هیجان بعد از باخت یا پیروزی</h5>
                 <p class="card-text">آیا آدم هیجانی هستید یا نه!؟</p>
@@ -272,10 +282,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Mentaldrain01.jpg"
                 class="card-img-top"
                 alt="تخلیه روانی در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Mentaldrain01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">تخلیه روانی در ورزش</h5>
                 <p class="card-text">تخلیه روانی برای هر روز لازم است.</p>
@@ -290,10 +299,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Vitamins.jpg"
                 class="card-img-top"
                 alt="نقش ویتامین ها در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Vitamins.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">نقش ویتامین ها در ورزش</h5>
                 <p class="card-text">
@@ -304,32 +312,13 @@
             </div>
           </div>
 
-          <!-- مقاله 10 -->
-          <div class="col-md-4 mb-4">
-            <div class="card">
-              <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\venting02.jpg"
-                class="card-img-top"
-                alt="شیوه های تخلیه باد معده قبل از بازی"
-              />
-              <div class="card-body">
-                <h5 class="card-title">
-                  Gastro-Release Techniques قبل از بازی
-                </h5>
-                <p class="card-text">قبل از بازی، به معده خود رسیدگی کنید</p>
-                <a href="Venting.html" class="btn btn-primary">ادامه مطلب</a>
-              </div>
-            </div>
-          </div>
-
           <!-- مقاله 11 -->
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\EzatNafs01.jpg"
                 class="card-img-top"
                 alt="عزت نفس در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\EzatNafs01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">عزت نفس در ورزش</h5>
                 <p class="card-text">
@@ -347,10 +336,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Winning_Mindset01.jpg"
                 class="card-img-top"
                 alt="ذهنیت برنده در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Winning_Mindset01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">ذهنیت برنده در ورزش</h5>
                 <p class="card-text">
@@ -367,10 +355,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Mental_Toughness01.jpg"
                 class="card-img-top"
                 alt="تاب آوری ذهنی در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Mental_Toughness01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">تاب آوری ذهنی در ورزش</h5>
                 <p class="card-text">
@@ -388,10 +375,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Human_body_anatomy01.jpg"
                 class="card-img-top"
                 alt="آناتومی بدن انسان"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Human_body_anatomy01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">آناتومی بدن انسان</h5>
                 <p class="card-text">
@@ -409,10 +395,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\physiology001.jpg"
                 class="card-img-top"
                 alt="فیزیولوژی بدن انسان"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\physiology001.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">فیزیولوژی بدن انسان</h5>
                 <p class="card-text">
@@ -430,10 +415,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\physiology001.jpg"
                 class="card-img-top"
                 alt="انواع ساخت بدن در بدنسازی و علوم تمرین"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\physiology001.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">
                   انواع ساخت بدن در بدنسازی و علوم تمرین
@@ -453,10 +437,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="TamrinDarVarzesh.jpg"
                 class="card-img-top"
                 alt="تمرین در ورزش"
-              />
+               data-src="TamrinDarVarzesh.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">تمرین در ورزش</h5>
                 <p class="card-text">
@@ -473,10 +456,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Sleep.jpg"
                 class="card-img-top"
                 alt="فرایند خوابیدن"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\Sleep.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">فرایند خوابیدن</h5>
                 <p class="card-text">
@@ -492,10 +474,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\TekrarvaTanavoeh.jpg"
                 class="card-img-top"
                 alt="تکرار و تنوع تکرار در ورزش"
-              />
+               data-src="E:\ravan_sport\Ravanshenasi_Varzeshi\Aksha\TekrarvaTanavoeh.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">تکرار و تنوع تکرار در ورزش</h5>
                 <p class="card-text">
@@ -514,10 +495,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="Kapitan.jpg"
                 class="card-img-top"
                 alt="مهارت رهبری کردن خود و دیگران در روانشناسی ورزشی"
-              />
+               data-src="Kapitan.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">
                   مهارت رهبری کردن خود و دیگران در روانشناسی ورزشی
@@ -535,10 +515,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="Psychophysiology in sports.jpg"
                 class="card-img-top"
                 alt="روان فیزیولوژی در ورزش"
-              />
+               data-src="Psychophysiology in sports.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">روان فیزیولوژی در ورزش</h5>
                 <p class="card-text">
@@ -555,10 +534,9 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <img
-                src="Addiction_and_dopamine.jpg"
                 class="card-img-top"
                 alt="اعتیاد و دوپامین"
-              />
+               data-src="Addiction_and_dopamine.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
               <div class="card-body">
                 <h5 class="card-title">روان فیزیولوژی در ورزش</h5>
                 <p class="card-text">
@@ -584,5 +562,29 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>
+  
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        function loadCardImage(img) {
+          if (!img || !img.dataset.src || img.src === img.dataset.src) return;
+          img.src = img.dataset.src;
+        }
+        var cards = document.querySelectorAll('.card');
+        cards.forEach(function (card) {
+          var img = card.querySelector('img.card-img-top');
+          if (!img) return;
+          card.addEventListener('pointerenter', function () {
+            loadCardImage(img);
+          });
+          card.addEventListener('touchstart', function () {
+            loadCardImage(img);
+          }, { passive: true });
+          card.addEventListener('focusin', function () {
+            loadCardImage(img);
+          });
+        });
+      });
+    </script>
+
   </body>
 </html>

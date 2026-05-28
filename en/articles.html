@@ -10,7 +10,28 @@
     />
     <link rel="stylesheet" href="css/styles.css" />
     <!-- Your custom stylesheet -->
-  </head>
+  
+    <style>
+      /* Lazy reveal images */
+      .card-img-top {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s ease, visibility .25s ease;
+        min-height: 180px;
+        background: #f2f2f2;
+        object-fit: cover;
+      }
+      .card:hover .card-img-top,
+      .card.touch-active .card-img-top,
+      .card:focus-within .card-img-top {
+        opacity: 1;
+        visibility: visible;
+      }
+      .card {
+        cursor: pointer;
+      }
+    </style>
+</head>
   <body id="page-top">
     <!-- Navbar -->
     <nav
@@ -57,10 +78,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="TamarkozZehni.jpg"
               class="card-img-top"
               alt="Mental Focus in Professional Sports"
-            />
+             data-src="TamarkozZehni.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Mental Focus in Professional Sports</h5>
               <p class="card-text">
@@ -74,10 +94,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=60"
               class="card-img-top"
               alt="Stress Management in Athletes"
-            />
+             data-src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=60" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Stress Management in Athletes</h5>
               <p class="card-text">
@@ -91,10 +110,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=60"
               class="card-img-top"
               alt="Sports Motivation"
-            />
+             data-src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=800&q=60" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">How to Maintain Sports Motivation?</h5>
               <p class="card-text">
@@ -108,10 +126,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="park.png"
               class="card-img-top"
               alt="Nature, the Silent Healer of the Mind"
-            />
+             data-src="park.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Nature, the Silent Healer of the Mind</h5>
               <p class="card-text">
@@ -125,10 +142,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Focusonthemuscles1.jpg"
               class="card-img-top"
               alt="Focus on Muscles in Sports"
-            />
+             data-src="Focusonthemuscles1.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Focus on Muscles in Sports</h5>
               <p class="card-text">
@@ -142,10 +158,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="bodymuscles.jpg"
               class="card-img-top"
               alt="Body Muscles"
-            />
+             data-src="bodymuscles.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Body Muscles</h5>
               <p class="card-text">
@@ -159,10 +174,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Stretchingmovements.jpg"
               class="card-img-top"
               alt="Stretching Movements in Sports"
-            />
+             data-src="Stretchingmovements.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Stretching Movements in Sports</h5>
               <p class="card-text">
@@ -176,10 +190,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="TamrinatDarki.jpg"
               class="card-img-top"
               alt="Perceptual Exercises in Sports"
-            />
+             data-src="TamrinatDarki.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Perceptual Exercises in Sports</h5>
               <p class="card-text">
@@ -193,10 +206,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Preventingsportsburnout.jpg"
               class="card-img-top"
               alt="Preventing Sports Burnout"
-            />
+             data-src="Preventingsportsburnout.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Preventing Sports Burnout</h5>
               <p class="card-text">
@@ -210,10 +222,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="excitement.jpg"
               class="card-img-top"
               alt="Excitement After Loss or Victory"
-            />
+             data-src="excitement.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Excitement After Loss or Victory</h5>
               <p class="card-text">Are you an excitable person or not?</p>
@@ -225,10 +236,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Mentaldrain01.jpg"
               class="card-img-top"
               alt="Mental Drain in Sports"
-            />
+             data-src="Mentaldrain01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Mental Drain in Sports</h5>
               <p class="card-text">Mental drain is necessary every day.</p>
@@ -240,10 +250,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Vitamins.jpg"
               class="card-img-top"
               alt="Role of Vitamins in Sports"
-            />
+             data-src="Vitamins.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Role of Vitamins in Sports</h5>
               <p class="card-text">
@@ -257,10 +266,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="venting02.jpg"
               class="card-img-top"
               alt="Gastro-Release Techniques Before Game"
-            />
+             data-src="venting02.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">
                 Gastro-Release Techniques Before Game
@@ -274,10 +282,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="EzatNafs01.jpg"
               class="card-img-top"
               alt="Self-Esteem in Sports"
-            />
+             data-src="EzatNafs01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Self-Esteem in Sports</h5>
               <p class="card-text">
@@ -291,10 +298,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Winning_Mindset01.jpg"
               class="card-img-top"
               alt="Winning Mindset in Sports"
-            />
+             data-src="Winning_Mindset01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Winning Mindset in Sports</h5>
               <p class="card-text">
@@ -308,10 +314,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Mental_Toughness01.jpg"
               class="card-img-top"
               alt="Mental Toughness in Sports"
-            />
+             data-src="Mental_Toughness01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Mental Toughness in Sports</h5>
               <p class="card-text">
@@ -325,10 +330,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Human_body_anatomy01.jpg"
               class="card-img-top"
               alt="Human Body Anatomy"
-            />
+             data-src="Human_body_anatomy01.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Human Body Anatomy</h5>
               <p class="card-text">
@@ -342,10 +346,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="physiology001.jpg"
               class="card-img-top"
               alt="Human Body Physiology"
-            />
+             data-src="physiology001.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Human Body Physiology</h5>
               <p class="card-text">
@@ -359,10 +362,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="physiology001.jpg"
               class="card-img-top"
               alt="Types of Body Build in Bodybuilding and Exercise Sciences"
-            />
+             data-src="physiology001.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">
                 Types of Body Build in Bodybuilding and Exercise Sciences
@@ -378,10 +380,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="TamrinDarVarzesh.jpg"
               class="card-img-top"
               alt="Training in Sports"
-            />
+             data-src="TamrinDarVarzesh.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Training in Sports</h5>
               <p class="card-text">
@@ -395,10 +396,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Sleep.jpg"
               class="card-img-top"
               alt="Sleep Process"
-            />
+             data-src="Sleep.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Sleep Process</h5>
               <p class="card-text">
@@ -412,10 +412,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="TekrarvaTanavoeh.jpg"
               class="card-img-top"
               alt="Repetition and Repetition Variety in Sports"
-            />
+             data-src="TekrarvaTanavoeh.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Repetition and Repetition Variety in Sports</h5>
               <p class="card-text">
@@ -429,10 +428,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Kapitan.jpg"
               class="card-img-top"
               alt="Leadership Skills of Self and Others in Sports Psychology"
-            />
+             data-src="Kapitan.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">
                 Leadership Skills of Self and Others in Sports Psychology
@@ -448,10 +446,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Psychophysiology in sports.jpg"
               class="card-img-top"
               alt="Psychophysiology in Sports"
-            />
+             data-src="Psychophysiology in sports.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Psychophysiology in Sports</h5>
               <p class="card-text">
@@ -465,10 +462,9 @@
         <div class="col-md-4 mb-4">
           <div class="card">
             <img
-              src="Addiction_and_dopamine.jpg"
               class="card-img-top"
               alt="Addiction and Dopamine"
-            />
+             data-src="Addiction_and_dopamine.jpg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" />
             <div class="card-body">
               <h5 class="card-title">Addiction and Dopamine</h5>
               <p class="card-text">
@@ -490,5 +486,29 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/scripts.js"></script>
+  
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        function loadCardImage(img) {
+          if (!img || !img.dataset.src || img.src === img.dataset.src) return;
+          img.src = img.dataset.src;
+        }
+        var cards = document.querySelectorAll('.card');
+        cards.forEach(function (card) {
+          var img = card.querySelector('img.card-img-top');
+          if (!img) return;
+          card.addEventListener('pointerenter', function () {
+            loadCardImage(img);
+          });
+          card.addEventListener('touchstart', function () {
+            loadCardImage(img);
+          }, { passive: true });
+          card.addEventListener('focusin', function () {
+            loadCardImage(img);
+          });
+        });
+      });
+    </script>
+
   </body>
 </html>
