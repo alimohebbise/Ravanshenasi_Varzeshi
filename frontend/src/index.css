@@ -1,0 +1,55 @@
+body {
+  background-color: #f8f9fa;
+}
+
+/* RTL support for Persian */
+[dir="rtl"] {
+  font-family: 'Tahoma', 'Arial', sans-serif;
+}
+
+.article-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  height: 100%;
+}
+
+.article-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.article-frame {
+  width: 100%;
+  height: calc(100vh - 70px);
+  border: none;
+  display: block;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1055;
+}
+
+.modal-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+}
+
+.badge-view {
+  font-size: 0.75rem;
+}
+
+.category-badge {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
