@@ -16,5 +16,32 @@ services:
       timeout: 5s
       retries: 5
 
+  backend:
+    build:
+      context: ./backend
+    # `serve_html` resolves article files via BASE_DIR.parent (the project root,
+    # which holds fa/ and en/) — mount the whole repo and point the working dir
+    # at backend/ so that relative path stays correct inside the container too.
+    working_dir: /workspace/backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Inside the compose network, the DB is reached via the service name and
+      # its internal port — these intentionally override host-facing values from .env
+      DB_NAME: ${DB_NAME:-ravanshenasi_varzeshi}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      DB_HOST: db
+      DB_PORT: "5432"
+      DEFAULT_ADMIN_USERNAME: ${DEFAULT_ADMIN_USERNAME:-admin}
+      DEFAULT_ADMIN_PASSWORD: ${DEFAULT_ADMIN_PASSWORD:-admin12345}
+      DEFAULT_ADMIN_EMAIL: ${DEFAULT_ADMIN_EMAIL:-admin@ravanshenasi-varzeshi.local}
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/workspace
+
 volumes:
   postgres_data:

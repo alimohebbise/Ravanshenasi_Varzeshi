@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -71,6 +72,48 @@ class LoginTests(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class SuperuserRoleTests(APITestCase):
+    def test_creating_a_superuser_sets_owner_role(self):
+        user = User.objects.create_superuser(username="root", email="root@example.com", password="x12345678")
+
+        self.assertEqual(user.role, "owner")
+
+    def test_promoting_existing_user_to_superuser_sets_owner_role(self):
+        user = User.objects.create_user(username="someone", password="x12345678", role="athlete")
+
+        user.is_superuser = True
+        user.save()
+
+        user.refresh_from_db()
+        self.assertEqual(user.role, "owner")
+
+
+class CreateDefaultAdminCommandTests(APITestCase):
+    def test_creates_admin_account_when_missing(self):
+        call_command("create_default_admin")
+
+        admin = User.objects.get(username="admin")
+        self.assertTrue(admin.is_superuser)
+        self.assertTrue(admin.is_staff)
+        self.assertEqual(admin.role, "owner")
+        self.assertTrue(admin.check_password("admin12345"))
+
+    def test_is_idempotent_and_does_not_duplicate(self):
+        call_command("create_default_admin")
+        call_command("create_default_admin")
+
+        self.assertEqual(User.objects.filter(username="admin").count(), 1)
+
+    def test_promotes_existing_superusers_to_owner(self):
+        legacy = User.objects.create_user(username="legacy", password="x12345678", role="athlete")
+        User.objects.filter(pk=legacy.pk).update(is_superuser=True, is_staff=True)
+
+        call_command("create_default_admin")
+
+        legacy.refresh_from_db()
+        self.assertEqual(legacy.role, "owner")
 
 
 class MeTests(APITestCase):

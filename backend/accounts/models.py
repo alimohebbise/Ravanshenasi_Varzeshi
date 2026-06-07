@@ -11,6 +11,11 @@ class User(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="athlete")
     phone_number = models.CharField(max_length=20, blank=True)
 
+    def save(self, *args, **kwargs):
+        if self.is_superuser:
+            self.role = "owner"
+        super().save(*args, **kwargs)
+
     @property
     def is_owner(self):
         return self.role == "owner"

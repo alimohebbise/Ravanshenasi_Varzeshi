@@ -1,0 +1,4 @@
+- for running the application i need a script to remove the previous docker and run it again and also run the backend in a docker and run the frontend locally
+- the script should be in the project root
+- the script should set up everything for developers from venv to downloading and istalling the dependencies
+- script should alert when docker is not installed

@@ -1,3 +1,6 @@
 - Application should have a default admin with username admin and password: Admin@0913
 - Admin have a different dashboard that after signin is able to see including list of coaches and requests of coaches for registration.
 - in admin dashboard Admin can observe and manage everything.
+
+
+
