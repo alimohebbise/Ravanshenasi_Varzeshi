@@ -1,5 +1,22 @@
 from rest_framework import serializers
+from django.contrib.auth import get_user_model
 from .models import CoachApplication
+
+User = get_user_model()
+
+
+class ApprovedCoachSerializer(serializers.ModelSerializer):
+    """Public profile of an approved coach, used for the coaches directory."""
+    user_id = serializers.IntegerField(source="user.id", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
+
+    class Meta:
+        model = CoachApplication
+        fields = [
+            "user_id", "username",
+            "first_name", "last_name",
+            "bio", "expertise", "experience_years",
+        ]
 
 
 class CoachApplicationSerializer(serializers.ModelSerializer):

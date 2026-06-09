@@ -42,9 +42,17 @@ export default function Navbar() {
               <li className="nav-item">
                 <Link className="nav-link" to="/en/articles">English</Link>
               </li>
-              {user && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/coaches">مربیان</Link>
+              </li>
+              {user && user.role === 'athlete' && (
                 <li className="nav-item">
                   <Link className="nav-link" to="/coach-application">ثبت نام مربی</Link>
+                </li>
+              )}
+              {(user?.role === 'coach' || user?.role === 'owner') && (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/coach-dashboard">داشبورد مربی</Link>
                 </li>
               )}
               {user?.role === 'owner' && (

@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "appointments",
     "articles",
     "coaches",
+    "posts",
 ]
 
 AUTH_USER_MODEL = "accounts.User"

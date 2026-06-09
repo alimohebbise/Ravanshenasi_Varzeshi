@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import CoachApplication
-from .serializers import CoachApplicationSerializer
+from .serializers import CoachApplicationSerializer, ApprovedCoachSerializer
 
 
 class IsOwner(permissions.BasePermission):
@@ -56,6 +56,15 @@ def review_application(request, pk):
         return Response({"message": "Application rejected."})
 
     return Response({"error": "Invalid action. Use 'approve' or 'reject'."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ApprovedCoachListView(generics.ListAPIView):
+    """Public directory of approved coaches."""
+    serializer_class = ApprovedCoachSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return CoachApplication.objects.filter(status="approved").select_related("user").order_by("first_name")
 
 
 @api_view(["GET"])

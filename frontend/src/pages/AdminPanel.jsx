@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
 
@@ -12,6 +12,8 @@ export default function AdminPanel() {
   const [tab, setTab] = useState('applications')
   const [applications, setApplications] = useState([])
   const [articles, setArticles] = useState([])
+  const [posts, setPosts] = useState([])
+  const [coaches, setCoaches] = useState([])
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(null)
   const [statusFilter, setStatusFilter] = useState('pending')
@@ -23,19 +25,26 @@ export default function AdminPanel() {
   }, [user, navigate])
 
   useEffect(() => {
+    setLoading(true)
     if (tab === 'applications') {
-      setLoading(true)
       client.get(`/coaches/applications/?status=${statusFilter}`)
         .then(({ data }) => setApplications(data))
         .finally(() => setLoading(false))
-    } else {
-      setLoading(true)
+    } else if (tab === 'articles') {
       Promise.all([
         client.get('/articles/?lang=fa'),
         client.get('/articles/?lang=en'),
       ]).then(([fa, en]) => {
         setArticles([...fa.data, ...en.data].sort((a, b) => b.view_count - a.view_count))
       }).finally(() => setLoading(false))
+    } else if (tab === 'posts') {
+      client.get('/posts/')
+        .then(({ data }) => setPosts([...data].sort((a, b) => b.view_count - a.view_count)))
+        .finally(() => setLoading(false))
+    } else if (tab === 'coaches') {
+      client.get('/coaches/approved/')
+        .then(({ data }) => setCoaches(data))
+        .finally(() => setLoading(false))
     }
   }, [tab, statusFilter])
 
@@ -72,6 +81,22 @@ export default function AdminPanel() {
             onClick={() => setTab('articles')}
           >
             آمار مقالات
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${tab === 'posts' ? 'active' : ''}`}
+            onClick={() => setTab('posts')}
+          >
+            پست‌های مربیان
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${tab === 'coaches' ? 'active' : ''}`}
+            onClick={() => setTab('coaches')}
+          >
+            مربیان تأیید شده
           </button>
         </li>
       </ul>
@@ -144,6 +169,83 @@ export default function AdminPanel() {
             </div>
           )}
         </>
+      )}
+
+      {tab === 'posts' && (
+        loading ? (
+          <div className="text-center py-5"><div className="spinner-border" /></div>
+        ) : posts.length === 0 ? (
+          <p className="text-muted">هنوز پست منتشر شده‌ای وجود ندارد.</p>
+        ) : (
+          <div className="table-responsive">
+            <table className="table table-hover align-middle">
+              <thead className="table-dark">
+                <tr>
+                  <th>عنوان</th>
+                  <th>مربی</th>
+                  <th>بازدید</th>
+                  <th>تاریخ انتشار</th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.map((p) => (
+                  <tr key={p.id}>
+                    <td className="fw-semibold">{p.title}</td>
+                    <td>{p.coach_name}</td>
+                    <td><strong>{p.view_count.toLocaleString('fa-IR')}</strong></td>
+                    <td className="text-muted small">
+                      {new Date(p.created_at).toLocaleDateString('fa-IR')}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )
+      )}
+
+      {tab === 'coaches' && (
+        loading ? (
+          <div className="text-center py-5"><div className="spinner-border" /></div>
+        ) : coaches.length === 0 ? (
+          <p className="text-muted">هنوز مربی تأیید شده‌ای وجود ندارد.</p>
+        ) : (
+          <div className="row g-3">
+            {coaches.map((coach) => (
+              <div key={coach.user_id} className="col-12 col-md-6 col-lg-4">
+                <div className="card h-100 border-0 shadow-sm">
+                  <div className="card-body">
+                    <div className="d-flex align-items-center gap-3 mb-2">
+                      <div
+                        className="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold"
+                        style={{ width: 48, height: 48, flexShrink: 0, fontSize: '1.1rem' }}
+                      >
+                        {coach.first_name?.[0]}{coach.last_name?.[0]}
+                      </div>
+                      <div>
+                        <div className="fw-bold">{coach.first_name} {coach.last_name}</div>
+                        <div className="text-muted small">{coach.expertise || '—'}</div>
+                      </div>
+                    </div>
+                    {coach.experience_years > 0 && (
+                      <span className="badge bg-light text-dark me-2">
+                        {coach.experience_years} سال تجربه
+                      </span>
+                    )}
+                  </div>
+                  <div className="card-footer bg-white border-0">
+                    <Link
+                      to={`/coaches/${coach.user_id}`}
+                      className="btn btn-sm btn-outline-primary w-100"
+                    >
+                      مشاهده صفحه مربی
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
       )}
 
       {tab === 'articles' && (
