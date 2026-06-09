@@ -12,49 +12,83 @@ export default function CoachesList() {
       .finally(() => setLoading(false))
   }, [])
 
-  if (loading) {
-    return (
-      <div className="text-center py-5" style={{ marginTop: '80px' }}>
-        <div className="spinner-border" />
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="sp-loading" style={{ marginTop: 'var(--navbar-h)' }}>
+      <div className="sp-spinner" />
+    </div>
+  )
 
   return (
-    <div className="container py-4" style={{ marginTop: '70px' }} dir="rtl">
-      <h3 className="fw-bold mb-4">مربیان</h3>
-
-      {coaches.length === 0 ? (
-        <p className="text-muted">مربی تأیید شده‌ای وجود ندارد.</p>
-      ) : (
-        <div className="row g-3">
-          {coaches.map(coach => (
-            <div key={coach.user_id} className="col-12 col-sm-6 col-md-4">
-              <Link to={`/coaches/${coach.user_id}`} className="text-decoration-none">
-                <div className="card h-100 border-0 shadow-sm">
-                  <div className="card-body text-center p-4">
-                    <div
-                      className="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold fs-4 mx-auto mb-3"
-                      style={{ width: 64, height: 64 }}
-                    >
-                      {coach.first_name?.[0]}{coach.last_name?.[0]}
-                    </div>
-                    <h5 className="card-title mb-1">{coach.first_name} {coach.last_name}</h5>
-                    {coach.expertise && (
-                      <p className="text-muted small mb-2">{coach.expertise}</p>
-                    )}
-                    {coach.experience_years > 0 && (
-                      <span className="badge bg-light text-dark">
-                        {coach.experience_years} سال تجربه
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Link>
-            </div>
-          ))}
+    <div style={{ marginTop: 'var(--navbar-h)' }}>
+      <div style={{ background: 'var(--clr-navy)', padding: '2.25rem 0' }}>
+        <div className="container" dir="rtl">
+          <h2 style={{ color: '#fff', margin: 0, fontWeight: 800 }}>مربیان ما</h2>
+          <p style={{ color: 'rgba(255,255,255,.55)', margin: '.25rem 0 0', fontSize: '.9rem' }}>
+            متخصصان روانشناسی ورزشی تأیید شده
+          </p>
         </div>
-      )}
+      </div>
+
+      <div className="container py-4" dir="rtl">
+        {coaches.length === 0 ? (
+          <div className="sp-empty">
+            <div className="sp-empty-icon"><i className="bi bi-people" /></div>
+            <p>مربی تأیید شده‌ای وجود ندارد.</p>
+          </div>
+        ) : (
+          <div className="row g-3">
+            {coaches.map((coach) => (
+              <div key={coach.user_id} className="col-12 col-sm-6 col-md-4">
+                <Link to={`/coaches/${coach.user_id}`} className="sp-coach-card">
+                  <div className="p-4">
+                    <div className="d-flex align-items-center gap-3 mb-3">
+                      <div className="sp-coach-avatar">
+                        {coach.first_name?.[0]}{coach.last_name?.[0]}
+                      </div>
+                      <div>
+                        <div className="fw-bold" style={{ color: 'var(--clr-text)', fontSize: '1rem' }}>
+                          {coach.first_name} {coach.last_name}
+                        </div>
+                        {coach.expertise && (
+                          <div style={{ color: 'var(--clr-text-muted)', fontSize: '.82rem', marginTop: '.1rem' }}>
+                            {coach.expertise}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    {coach.bio && (
+                      <p style={{
+                        color: 'var(--clr-text-2)', fontSize: '.85rem', lineHeight: '1.6',
+                        overflow: 'hidden', display: '-webkit-box',
+                        WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                        margin: '0 0 .75rem',
+                      }}>
+                        {coach.bio}
+                      </p>
+                    )}
+                    <div className="d-flex align-items-center justify-content-between">
+                      {coach.experience_years > 0 ? (
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: '.3rem',
+                          background: 'var(--clr-teal-light)', color: 'var(--clr-teal)',
+                          padding: '.2rem .7rem', borderRadius: 'var(--radius-full)',
+                          fontSize: '.75rem', fontWeight: 700,
+                        }}>
+                          <i className="bi bi-award" />
+                          {coach.experience_years} سال تجربه
+                        </span>
+                      ) : <span />}
+                      <span style={{ color: 'var(--clr-accent)', fontSize: '.82rem', fontWeight: 600 }}>
+                        مشاهده <i className="bi bi-arrow-left" />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

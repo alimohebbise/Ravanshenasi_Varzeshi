@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 export default function LoginModal({ onClose, onSwitchToSignup }) {
   const { login } = useAuth()
   const [form, setForm] = useState({ username: '', password: '' })
+  const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -22,43 +23,82 @@ export default function LoginModal({ onClose, onSwitchToSignup }) {
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-        <button className="btn-close position-absolute top-0 end-0 m-3" onClick={onClose} />
-        <h5 className="mb-4 text-center fw-bold">ورود به سایت</h5>
-        {error && <div className="alert alert-danger py-2">{error}</div>}
+    <div className="sp-modal-overlay" onClick={onClose} dir="rtl">
+      <div className="sp-modal-box" onClick={(e) => e.stopPropagation()}>
+        <button className="sp-modal-close" onClick={onClose} aria-label="بستن">
+          <i className="bi bi-x" />
+        </button>
+
+        <div className="sp-modal-header">
+          <div className="sp-modal-icon">
+            <i className="bi bi-person-circle" />
+          </div>
+          <h5>خوش آمدید</h5>
+          <p>برای ادامه وارد حساب خود شوید</p>
+        </div>
+
+        {error && (
+          <div className="sp-alert error">
+            <i className="bi bi-exclamation-circle-fill flex-shrink-0" />
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label className="form-label">نام کاربری</label>
-            <input
-              className="form-control"
-              value={form.username}
-              onChange={(e) => setForm({ ...form, username: e.target.value })}
-              required
-              autoFocus
-            />
+            <div className="input-icon-wrap">
+              <i className="bi bi-person" />
+              <input
+                className="form-control"
+                placeholder="نام کاربری خود را وارد کنید"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                required
+                autoFocus
+              />
+            </div>
           </div>
-          <div className="mb-3">
+
+          <div className="mb-4">
             <label className="form-label">رمز عبور</label>
-            <input
-              type="password"
-              className="form-control"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              required
-            />
+            <div className="input-icon-wrap">
+              <i className="bi bi-lock" />
+              <input
+                type={showPw ? 'text' : 'password'}
+                className="form-control"
+                placeholder="رمز عبور خود را وارد کنید"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-pw"
+                onClick={() => setShowPw((v) => !v)}
+                tabIndex={-1}
+              >
+                <i className={`bi ${showPw ? 'bi-eye-slash' : 'bi-eye'}`} />
+              </button>
+            </div>
           </div>
-          <button className="btn btn-dark w-100" disabled={loading}>
-            {loading ? 'در حال ورود...' : 'ورود'}
+
+          <button
+            className="btn btn-dark w-100 py-2"
+            disabled={loading}
+            style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
+          >
+            {loading
+              ? <><span className="spinner-border spinner-border-sm me-2" />در حال ورود...</>
+              : <><i className="bi bi-box-arrow-in-right me-2" />ورود به حساب</>
+            }
           </button>
         </form>
-        <hr />
-        <p className="text-center mb-0">
+
+        <div className="sp-modal-footer">
           حساب ندارید؟{' '}
-          <button className="btn btn-link p-0" onClick={onSwitchToSignup}>
-            ثبت نام
-          </button>
-        </p>
+          <button className="link" onClick={onSwitchToSignup}>ثبت نام کنید</button>
+        </div>
       </div>
     </div>
   )

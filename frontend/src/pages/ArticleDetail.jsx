@@ -19,23 +19,24 @@ export default function ArticleDetail() {
   }, [slug, lang, article])
 
   return (
-    <div style={{ marginTop: '70px' }}>
-      <div className="bg-dark text-white py-2 px-3" dir={isRtl ? 'rtl' : 'ltr'}>
-        <Link to={`/${lang}/articles`} className="text-white text-decoration-none small">
-          <i className="bi bi-arrow-right me-1" />
-          {isRtl ? 'بازگشت به مقالات' : 'Back to Articles'}
+    <div>
+      <div className="article-topbar" dir={isRtl ? 'rtl' : 'ltr'}>
+        <Link to={`/${lang}/articles`} className="article-back-btn">
+          <i className={`bi bi-arrow-${isRtl ? 'right' : 'left'}`} />
+          {isRtl ? 'بازگشت' : 'Back'}
         </Link>
         {article && (
-          <span className="ms-3 small opacity-75">{article.title}</span>
+          <span className="article-topbar-title">{article.title}</span>
         )}
       </div>
-      {/* Serve the existing HTML file through the Vite proxy → Django */}
-      <iframe
-        src={`/${lang}/${slug}.html`}
-        title={article?.title || slug}
-        className="article-frame"
-        sandbox="allow-same-origin allow-scripts allow-popups"
-      />
+      <div className="article-frame-wrap">
+        <iframe
+          src={`/${lang}/${slug}.html`}
+          title={article?.title || slug}
+          className="article-frame"
+          sandbox="allow-same-origin allow-scripts allow-popups"
+        />
+      </div>
     </div>
   )
 }

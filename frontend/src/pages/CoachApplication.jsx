@@ -3,18 +3,30 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
 
+function FileUpload({ label, hint, accept, required, onChange, value }) {
+  return (
+    <div>
+      <label className="form-label">{label}</label>
+      <div className="file-upload-area">
+        <input type="file" accept={accept} required={required} onChange={onChange} />
+        <div className="icon"><i className="bi bi-cloud-upload" /></div>
+        <div className="label">{value ? value.name : 'فایل را اینجا بکشید یا کلیک کنید'}</div>
+        {value
+          ? <div className="selected"><i className="bi bi-check-circle me-1" />{value.name}</div>
+          : <div className="hint">{hint}</div>
+        }
+      </div>
+    </div>
+  )
+}
+
 export default function CoachApplication() {
   const { user } = useAuth()
   const navigate = useNavigate()
-  const [existing, setExisting] = useState(undefined) // undefined = loading
+  const [existing, setExisting] = useState(undefined)
   const [form, setForm] = useState({
-    first_name: '',
-    last_name: '',
-    national_id: '',
-    date_of_birth: '',
-    bio: '',
-    expertise: '',
-    experience_years: '',
+    first_name: '', last_name: '', national_id: '',
+    date_of_birth: '', bio: '', expertise: '', experience_years: '',
   })
   const [files, setFiles] = useState({ educational_documents: null, digital_signature: null })
   const [error, setError] = useState('')
@@ -22,18 +34,13 @@ export default function CoachApplication() {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!user) {
-      navigate('/fa/articles')
-      return
-    }
+    if (!user) { navigate('/fa/articles'); return }
     client.get('/coaches/my-application/')
       .then(({ data }) => setExisting(data))
       .catch(() => setExisting(null))
   }, [user, navigate])
 
-  function set(field) {
-    return (e) => setForm({ ...form, [field]: e.target.value })
-  }
+  const set = (field) => (e) => setForm({ ...form, [field]: e.target.value })
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -44,47 +51,74 @@ export default function CoachApplication() {
       Object.entries(form).forEach(([k, v]) => fd.append(k, v))
       if (files.educational_documents) fd.append('educational_documents', files.educational_documents)
       if (files.digital_signature) fd.append('digital_signature', files.digital_signature)
-
-      await client.post('/coaches/apply/', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
+      await client.post('/coaches/apply/', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       setSuccess(true)
     } catch (err) {
       const data = err.response?.data
-      if (data) {
-        setError(Object.values(data).flat().join(' '))
-      } else {
-        setError('خطایی رخ داد. دوباره تلاش کنید.')
-      }
+      setError(data ? Object.values(data).flat().join(' ') : 'خطایی رخ داد. دوباره تلاش کنید.')
     } finally {
       setLoading(false)
     }
   }
 
   if (!user) return null
-  if (existing === undefined) return <div className="text-center mt-5"><div className="spinner-border" /></div>
+  if (existing === undefined) return (
+    <div className="sp-loading" style={{ marginTop: 'var(--navbar-h)' }}>
+      <div className="sp-spinner" />
+    </div>
+  )
 
   if (success || existing) {
     const status = existing?.status
     const statusMap = { pending: 'در انتظار بررسی', approved: 'تأیید شده', rejected: 'رد شده' }
-    const badgeMap = { pending: 'warning', approved: 'success', rejected: 'danger' }
-
     return (
-      <div className="container py-5" style={{ marginTop: '70px' }} dir="rtl">
-        <div className="card shadow-sm mx-auto" style={{ maxWidth: 500 }}>
-          <div className="card-body text-center py-5">
-            <i className="bi bi-patch-check fs-1 text-success mb-3 d-block" />
-            <h5 className="fw-bold">درخواست ثبت شده است</h5>
-            {existing?.status && (
-              <p>
-                وضعیت:{' '}
-                <span className={`badge bg-${badgeMap[status]}`}>{statusMap[status]}</span>
+      <div style={{ marginTop: 'var(--navbar-h)' }}>
+        <div style={{ background: 'var(--clr-navy)', color: '#fff', padding: '2rem 0' }}>
+          <div className="container" dir="rtl">
+            <h2 style={{ color: '#fff', marginBottom: '.25rem' }}>درخواست مربیگری</h2>
+            <p style={{ color: 'rgba(255,255,255,.55)', margin: 0, fontSize: '.9rem' }}>وضعیت درخواست شما</p>
+          </div>
+        </div>
+        <div className="container py-5" dir="rtl">
+          <div className="mx-auto" style={{ maxWidth: 500 }}>
+            <div className="sp-card p-5 text-center">
+              <div
+                className="mx-auto mb-4 d-flex align-items-center justify-content-center"
+                style={{
+                  width: 80, height: 80, borderRadius: '50%',
+                  background: status === 'approved' ? 'var(--clr-success-light)'
+                    : status === 'rejected' ? 'var(--clr-danger-light)'
+                    : 'var(--clr-warning-light)',
+                  color: status === 'approved' ? 'var(--clr-success)'
+                    : status === 'rejected' ? 'var(--clr-danger)'
+                    : 'var(--clr-warning)',
+                  fontSize: '2.2rem',
+                }}
+              >
+                <i className={`bi ${
+                  status === 'approved' ? 'bi-patch-check-fill'
+                  : status === 'rejected' ? 'bi-x-octagon-fill'
+                  : 'bi-hourglass-split'
+                }`} />
+              </div>
+              <h5 className="fw-bold mb-2">درخواست ثبت شده است</h5>
+              {existing?.status && (
+                <div className="mb-3">
+                  <span className={`sp-status ${status}`}>{statusMap[status]}</span>
+                </div>
+              )}
+              <p style={{ color: 'var(--clr-text-2)', fontSize: '.9rem', maxWidth: 340, margin: '0 auto 1.5rem' }}>
+                {status === 'approved'
+                  ? 'تبریک! درخواست شما تأیید شده و اکنون دسترسی مربی دارید.'
+                  : status === 'rejected'
+                  ? 'متأسفانه درخواست شما رد شده است. برای اطلاعات بیشتر با مدیر تماس بگیرید.'
+                  : 'درخواست شما در حال بررسی است. پس از تأیید توسط مدیر، اطلاع‌رسانی می‌شود.'
+                }
               </p>
-            )}
-            <p className="text-muted">پس از بررسی توسط مدیر، نتیجه اعلام می‌شود.</p>
-            <button className="btn btn-dark" onClick={() => navigate('/fa/articles')}>
-              بازگشت به مقالات
-            </button>
+              <button className="btn btn-dark" onClick={() => navigate('/fa/articles')}>
+                <i className="bi bi-house me-2" />بازگشت به مقالات
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -92,67 +126,116 @@ export default function CoachApplication() {
   }
 
   return (
-    <div className="container py-5" style={{ marginTop: '70px' }} dir="rtl">
-      <div className="card shadow-sm mx-auto" style={{ maxWidth: 640 }}>
-        <div className="card-body p-4">
-          <h4 className="fw-bold mb-4">ثبت نام مربی</h4>
-          {error && <div className="alert alert-danger">{error}</div>}
+    <div style={{ marginTop: 'var(--navbar-h)' }}>
+      <div style={{ background: 'var(--clr-navy)', color: '#fff', padding: '2rem 0' }}>
+        <div className="container" dir="rtl">
+          <h2 style={{ color: '#fff', marginBottom: '.25rem' }}>
+            <i className="bi bi-person-badge me-2" />ثبت نام مربی
+          </h2>
+          <p style={{ color: 'rgba(255,255,255,.55)', margin: 0, fontSize: '.9rem' }}>
+            فرم زیر را با اطلاعات صحیح تکمیل کنید. مدیر پس از بررسی با شما تماس خواهد گرفت.
+          </p>
+        </div>
+      </div>
+
+      <div className="container py-4" dir="rtl">
+        <div className="mx-auto" style={{ maxWidth: 680 }}>
+          {error && (
+            <div className="sp-alert error mb-3">
+              <i className="bi bi-exclamation-circle-fill flex-shrink-0" />
+              {error}
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
-            <div className="row g-3">
-              <div className="col-6">
-                <label className="form-label">نام</label>
-                <input className="form-control" value={form.first_name} onChange={set('first_name')} required />
-              </div>
-              <div className="col-6">
-                <label className="form-label">نام خانوادگی</label>
-                <input className="form-control" value={form.last_name} onChange={set('last_name')} required />
-              </div>
-              <div className="col-6">
-                <label className="form-label">کد ملی</label>
-                <input className="form-control" value={form.national_id} onChange={set('national_id')} required maxLength={10} />
-              </div>
-              <div className="col-6">
-                <label className="form-label">تاریخ تولد</label>
-                <input type="date" className="form-control" value={form.date_of_birth} onChange={set('date_of_birth')} required />
-              </div>
-              <div className="col-12">
-                <label className="form-label">تخصص</label>
-                <input className="form-control" value={form.expertise} onChange={set('expertise')} placeholder="مثال: روانشناسی ورزشی، مربیگری فوتبال" />
-              </div>
-              <div className="col-6">
-                <label className="form-label">سابقه (سال)</label>
-                <input type="number" className="form-control" value={form.experience_years} onChange={set('experience_years')} min={0} />
-              </div>
-              <div className="col-12">
-                <label className="form-label">بیوگرافی</label>
-                <textarea className="form-control" rows={3} value={form.bio} onChange={set('bio')} />
-              </div>
-              <div className="col-12">
-                <label className="form-label">مدارک تحصیلی (فایل PDF یا تصویر)</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  required
-                  onChange={(e) => setFiles({ ...files, educational_documents: e.target.files[0] })}
-                />
-              </div>
-              <div className="col-12">
-                <label className="form-label">امضای دیجیتال (تصویر)</label>
-                <input
-                  type="file"
-                  className="form-control"
-                  accept=".jpg,.jpeg,.png"
-                  required
-                  onChange={(e) => setFiles({ ...files, digital_signature: e.target.files[0] })}
-                />
-              </div>
-              <div className="col-12">
-                <button className="btn btn-dark w-100" disabled={loading}>
-                  {loading ? 'در حال ارسال...' : 'ارسال درخواست'}
-                </button>
+            <div className="sp-card p-4 mb-3">
+              <div className="form-section-title">اطلاعات شخصی</div>
+              <div className="row g-3">
+                <div className="col-sm-6">
+                  <label className="form-label">نام</label>
+                  <input className="form-control" value={form.first_name} onChange={set('first_name')} required placeholder="نام" />
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">نام خانوادگی</label>
+                  <input className="form-control" value={form.last_name} onChange={set('last_name')} required placeholder="نام خانوادگی" />
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">کد ملی</label>
+                  <div className="input-icon-wrap">
+                    <i className="bi bi-credit-card" />
+                    <input className="form-control" value={form.national_id} onChange={set('national_id')} required maxLength={10} placeholder="۱۰ رقم" />
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">تاریخ تولد</label>
+                  <div className="input-icon-wrap">
+                    <i className="bi bi-calendar3" />
+                    <input type="date" className="form-control" value={form.date_of_birth} onChange={set('date_of_birth')} required />
+                  </div>
+                </div>
               </div>
             </div>
+
+            <div className="sp-card p-4 mb-3">
+              <div className="form-section-title">اطلاعات حرفه‌ای</div>
+              <div className="row g-3">
+                <div className="col-12">
+                  <label className="form-label">تخصص</label>
+                  <div className="input-icon-wrap">
+                    <i className="bi bi-briefcase" />
+                    <input className="form-control" value={form.expertise} onChange={set('expertise')} placeholder="مثال: روانشناسی ورزشی، مربیگری فوتبال" />
+                  </div>
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">سابقه (سال)</label>
+                  <div className="input-icon-wrap">
+                    <i className="bi bi-clock-history" />
+                    <input type="number" className="form-control" value={form.experience_years} onChange={set('experience_years')} min={0} placeholder="۰" />
+                  </div>
+                </div>
+                <div className="col-12">
+                  <label className="form-label">بیوگرافی</label>
+                  <textarea className="form-control" rows={4} value={form.bio} onChange={set('bio')} placeholder="خلاصه‌ای از سوابق و تخصص خود بنویسید..." />
+                </div>
+              </div>
+            </div>
+
+            <div className="sp-card p-4 mb-4">
+              <div className="form-section-title">مدارک و مستندات</div>
+              <div className="row g-3">
+                <div className="col-12">
+                  <FileUpload
+                    label="مدارک تحصیلی"
+                    hint="PDF، JPG یا PNG — حداکثر ۱۰ مگابایت"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    required
+                    value={files.educational_documents}
+                    onChange={(e) => setFiles({ ...files, educational_documents: e.target.files[0] })}
+                  />
+                </div>
+                <div className="col-12">
+                  <FileUpload
+                    label="امضای دیجیتال"
+                    hint="JPG یا PNG — تصویر واضح امضا"
+                    accept=".jpg,.jpeg,.png"
+                    required
+                    value={files.digital_signature}
+                    onChange={(e) => setFiles({ ...files, digital_signature: e.target.files[0] })}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="btn btn-dark w-100 py-2"
+              style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
+              disabled={loading}
+            >
+              {loading
+                ? <><span className="spinner-border spinner-border-sm me-2" />در حال ارسال...</>
+                : <><i className="bi bi-send me-2" />ارسال درخواست</>
+              }
+            </button>
           </form>
         </div>
       </div>

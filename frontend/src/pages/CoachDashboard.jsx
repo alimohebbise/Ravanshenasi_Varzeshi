@@ -3,11 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
 
-const STATUS_BADGE = {
-  published: 'success',
-  draft: 'secondary',
-}
-
 const emptyForm = { title: '', content: '', status: 'draft', cover_image: null }
 
 export default function CoachDashboard() {
@@ -17,16 +12,14 @@ export default function CoachDashboard() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [editing, setEditing] = useState(null) // post object or null (= create)
+  const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
     if (!user) return
-    if (user.role !== 'coach' && user.role !== 'owner') {
-      navigate('/fa/articles')
-    }
+    if (user.role !== 'coach' && user.role !== 'owner') navigate('/fa/articles')
   }, [user, navigate])
 
   const loadPosts = useCallback(() => {
@@ -39,42 +32,32 @@ export default function CoachDashboard() {
   useEffect(() => { loadPosts() }, [loadPosts])
 
   function openCreate() {
-    setEditing(null)
-    setForm(emptyForm)
-    setError('')
-    setShowModal(true)
+    setEditing(null); setForm(emptyForm); setError(''); setShowModal(true)
   }
 
   function openEdit(post) {
     setEditing(post)
     setForm({ title: post.title, content: post.content, status: post.status, cover_image: null })
-    setError('')
-    setShowModal(true)
+    setError(''); setShowModal(true)
   }
 
   async function handleSave(e) {
-    e.preventDefault()
-    setSaving(true)
-    setError('')
+    e.preventDefault(); setSaving(true); setError('')
     try {
       const fd = new FormData()
       fd.append('title', form.title)
       fd.append('content', form.content)
       fd.append('status', form.status)
       if (form.cover_image) fd.append('cover_image', form.cover_image)
-
       if (editing) {
         await client.patch(`/posts/${editing.id}/`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       } else {
         await client.post('/posts/create/', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       }
-      setShowModal(false)
-      loadPosts()
+      setShowModal(false); loadPosts()
     } catch (err) {
       setError(err.response?.data?.detail || JSON.stringify(err.response?.data) || 'خطا رخ داد')
-    } finally {
-      setSaving(false)
-    }
+    } finally { setSaving(false) }
   }
 
   async function handleDelete(post) {
@@ -83,212 +66,274 @@ export default function CoachDashboard() {
     loadPosts()
   }
 
-  const totalViews = posts.filter(p => p.status === 'published').reduce((s, p) => s + p.view_count, 0)
-  const publishedPosts = posts.filter(p => p.status === 'published')
+  const publishedPosts = posts.filter((p) => p.status === 'published')
+  const draftPosts     = posts.filter((p) => p.status === 'draft')
+  const totalViews     = publishedPosts.reduce((s, p) => s + p.view_count, 0)
+  const maxViews       = Math.max(...publishedPosts.map((p) => p.view_count), 1)
 
   if (!user || (user.role !== 'coach' && user.role !== 'owner')) return null
 
   return (
-    <div className="container py-4" style={{ marginTop: '70px' }} dir="rtl">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3 className="fw-bold mb-0">داشبورد مربی</h3>
-        <button className="btn btn-primary" onClick={openCreate}>+ پست جدید</button>
+    <div style={{ marginTop: 'var(--navbar-h)' }}>
+      {/* Header */}
+      <div style={{ background: 'var(--clr-navy)', color: '#fff', padding: '2rem 0' }}>
+        <div className="container d-flex align-items-center justify-content-between flex-wrap gap-3" dir="rtl">
+          <div>
+            <h2 style={{ color: '#fff', margin: '0 0 .2rem', fontWeight: 800 }}>داشبورد مربی</h2>
+            <p style={{ color: 'rgba(255,255,255,.5)', margin: 0, fontSize: '.88rem' }}>
+              مدیریت پست‌ها و مشاهده آمار بازدید
+            </p>
+          </div>
+          <button
+            className="btn btn-primary d-flex align-items-center gap-2"
+            style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
+            onClick={openCreate}
+          >
+            <i className="bi bi-plus-lg" /> پست جدید
+          </button>
+        </div>
       </div>
 
-      <ul className="nav nav-tabs mb-4">
-        <li className="nav-item">
-          <button className={`nav-link ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>
-            مقالات من
-          </button>
-        </li>
-        <li className="nav-item">
-          <button className={`nav-link ${tab === 'stats' ? 'active' : ''}`} onClick={() => setTab('stats')}>
-            آمار بازدید
-          </button>
-        </li>
-      </ul>
-
-      {tab === 'posts' && (
-        loading ? (
-          <div className="text-center py-5"><div className="spinner-border" /></div>
-        ) : posts.length === 0 ? (
-          <div className="text-center text-muted py-5">
-            <p>هنوز پستی ندارید.</p>
-            <button className="btn btn-primary" onClick={openCreate}>اولین پست را بنویسید</button>
+      <div className="container py-4" dir="rtl">
+        {/* Stats row */}
+        <div className="row g-3 mb-4">
+          <div className="col-6 col-md-4">
+            <div className="sp-stat-card">
+              <div className="sp-stat-icon blue"><i className="bi bi-eye" /></div>
+              <div>
+                <div className="sp-stat-val">{totalViews.toLocaleString('fa-IR')}</div>
+                <div className="sp-stat-lbl">کل بازدیدها</div>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="table-responsive">
-            <table className="table table-hover align-middle">
-              <thead className="table-dark">
-                <tr>
-                  <th>عنوان</th>
-                  <th>وضعیت</th>
-                  <th>بازدید</th>
-                  <th>تاریخ</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {posts.map(post => (
-                  <tr key={post.id}>
-                    <td className="fw-semibold">{post.title}</td>
-                    <td>
-                      <span className={`badge bg-${STATUS_BADGE[post.status]}`}>
-                        {post.status === 'published' ? 'منتشر شده' : 'پیش‌نویس'}
-                      </span>
-                    </td>
-                    <td>{post.view_count.toLocaleString('fa-IR')}</td>
-                    <td className="text-muted small">
-                      {new Date(post.created_at).toLocaleDateString('fa-IR')}
-                    </td>
-                    <td>
-                      <div className="d-flex gap-2">
-                        <button className="btn btn-sm btn-outline-primary" onClick={() => openEdit(post)}>
-                          ویرایش
-                        </button>
-                        <button className="btn btn-sm btn-outline-danger" onClick={() => handleDelete(post)}>
-                          حذف
-                        </button>
-                      </div>
-                    </td>
+          <div className="col-6 col-md-4">
+            <div className="sp-stat-card">
+              <div className="sp-stat-icon green"><i className="bi bi-send-check" /></div>
+              <div>
+                <div className="sp-stat-val">{publishedPosts.length}</div>
+                <div className="sp-stat-lbl">منتشر شده</div>
+              </div>
+            </div>
+          </div>
+          <div className="col-6 col-md-4">
+            <div className="sp-stat-card">
+              <div className="sp-stat-icon yellow"><i className="bi bi-file-earmark-text" /></div>
+              <div>
+                <div className="sp-stat-val">{draftPosts.length}</div>
+                <div className="sp-stat-lbl">پیش‌نویس</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div className="sp-tabs">
+          <button className={`sp-tab-btn ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>
+            <i className="bi bi-list-ul me-1" />مقالات من
+          </button>
+          <button className={`sp-tab-btn ${tab === 'stats' ? 'active' : ''}`} onClick={() => setTab('stats')}>
+            <i className="bi bi-bar-chart me-1" />آمار بازدید
+          </button>
+        </div>
+
+        {/* Posts tab */}
+        {tab === 'posts' && (
+          loading ? (
+            <div className="sp-loading"><div className="sp-spinner" /></div>
+          ) : posts.length === 0 ? (
+            <div className="sp-empty">
+              <div className="sp-empty-icon"><i className="bi bi-journal-plus" /></div>
+              <p>هنوز پستی ندارید.</p>
+              <button className="btn btn-primary" onClick={openCreate}>اولین پست را بنویسید</button>
+            </div>
+          ) : (
+            <div className="sp-table">
+              <table className="table mb-0">
+                <thead>
+                  <tr>
+                    <th>عنوان</th>
+                    <th>وضعیت</th>
+                    <th>بازدید</th>
+                    <th>تاریخ</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )
-      )}
+                </thead>
+                <tbody>
+                  {posts.map((post) => (
+                    <tr key={post.id}>
+                      <td style={{ fontWeight: 600 }}>{post.title}</td>
+                      <td>
+                        <span className={`sp-status ${post.status}`}>
+                          {post.status === 'published' ? 'منتشر شده' : 'پیش‌نویس'}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="sp-view-count">
+                          <i className="bi bi-eye" />
+                          {post.view_count.toLocaleString('fa-IR')}
+                        </span>
+                      </td>
+                      <td style={{ color: 'var(--clr-text-muted)', fontSize: '.82rem' }}>
+                        {new Date(post.created_at).toLocaleDateString('fa-IR')}
+                      </td>
+                      <td>
+                        <div className="d-flex gap-2">
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            style={{ borderRadius: 'var(--radius-sm)' }}
+                            onClick={() => openEdit(post)}
+                          >
+                            <i className="bi bi-pencil" />
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            style={{ borderRadius: 'var(--radius-sm)' }}
+                            onClick={() => handleDelete(post)}
+                          >
+                            <i className="bi bi-trash" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        )}
 
-      {tab === 'stats' && (
-        <div>
-          <div className="row g-3 mb-4">
-            <div className="col-6 col-md-3">
-              <div className="card text-center p-3">
-                <div className="fs-2 fw-bold text-primary">{totalViews.toLocaleString('fa-IR')}</div>
-                <div className="text-muted small">کل بازدیدها</div>
+        {/* Stats tab */}
+        {tab === 'stats' && (
+          <div>
+            {publishedPosts.length === 0 ? (
+              <div className="sp-empty">
+                <div className="sp-empty-icon"><i className="bi bi-bar-chart" /></div>
+                <p>برای مشاهده آمار، ابتدا یک پست منتشر کنید.</p>
               </div>
-            </div>
-            <div className="col-6 col-md-3">
-              <div className="card text-center p-3">
-                <div className="fs-2 fw-bold text-success">{publishedPosts.length}</div>
-                <div className="text-muted small">پست منتشر شده</div>
-              </div>
-            </div>
-            <div className="col-6 col-md-3">
-              <div className="card text-center p-3">
-                <div className="fs-2 fw-bold text-secondary">{posts.length - publishedPosts.length}</div>
-                <div className="text-muted small">پیش‌نویس</div>
-              </div>
-            </div>
-          </div>
-
-          {publishedPosts.length > 0 && (
-            <>
-              <h5 className="mb-3">بازدید هر پست</h5>
-              <div className="table-responsive">
-                <table className="table align-middle">
-                  <thead className="table-light">
+            ) : (
+              <div className="sp-table">
+                <table className="table mb-0">
+                  <thead>
                     <tr>
                       <th>عنوان پست</th>
                       <th>بازدید</th>
-                      <th style={{ minWidth: '200px' }}>نمودار</th>
+                      <th style={{ minWidth: 180 }}>نمودار</th>
                     </tr>
                   </thead>
                   <tbody>
                     {[...publishedPosts]
                       .sort((a, b) => b.view_count - a.view_count)
-                      .map(post => {
-                        const max = Math.max(...publishedPosts.map(p => p.view_count), 1)
-                        const pct = Math.round((post.view_count / max) * 100)
-                        return (
-                          <tr key={post.id}>
-                            <td>{post.title}</td>
-                            <td className="fw-bold">{post.view_count.toLocaleString('fa-IR')}</td>
-                            <td>
-                              <div className="progress" style={{ height: '12px' }}>
-                                <div
-                                  className="progress-bar bg-primary"
-                                  style={{ width: `${pct}%` }}
-                                />
-                              </div>
-                            </td>
-                          </tr>
-                        )
-                      })}
+                      .map((post) => (
+                        <tr key={post.id}>
+                          <td style={{ fontWeight: 600 }}>{post.title}</td>
+                          <td style={{ fontWeight: 700, color: 'var(--clr-accent)' }}>
+                            {post.view_count.toLocaleString('fa-IR')}
+                          </td>
+                          <td>
+                            <div className="sp-progress">
+                              <div
+                                className="sp-progress-bar"
+                                style={{ width: `${Math.round((post.view_count / maxViews) * 100)}%` }}
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
-            </>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
 
       {/* Create / Edit modal */}
       {showModal && (
-        <div className="modal show d-block" style={{ background: 'rgba(0,0,0,.5)' }} dir="rtl">
-          <div className="modal-dialog modal-lg modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{editing ? 'ویرایش پست' : 'پست جدید'}</h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)} />
+        <div className="sp-modal-overlay" dir="rtl">
+          <div className="sp-modal-box" style={{ maxWidth: 640 }} onClick={(e) => e.stopPropagation()}>
+            <button className="sp-modal-close" onClick={() => setShowModal(false)}>
+              <i className="bi bi-x" />
+            </button>
+            <div className="sp-modal-header">
+              <div className="sp-modal-icon">
+                <i className={`bi ${editing ? 'bi-pencil-square' : 'bi-plus-circle'}`} />
               </div>
-              <form onSubmit={handleSave}>
-                <div className="modal-body">
-                  {error && <div className="alert alert-danger">{error}</div>}
-
-                  <div className="mb-3">
-                    <label className="form-label">عنوان</label>
-                    <input
-                      className="form-control"
-                      required
-                      value={form.title}
-                      onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">محتوا</label>
-                    <textarea
-                      className="form-control"
-                      rows={10}
-                      required
-                      value={form.content}
-                      onChange={e => setForm(f => ({ ...f, content: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">تصویر بارگذاری (اختیاری)</label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      accept="image/*"
-                      onChange={e => setForm(f => ({ ...f, cover_image: e.target.files[0] || null }))}
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label className="form-label">وضعیت</label>
-                    <select
-                      className="form-select"
-                      value={form.status}
-                      onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
-                    >
-                      <option value="draft">پیش‌نویس</option>
-                      <option value="published">منتشر شده</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                    انصراف
-                  </button>
-                  <button type="submit" className="btn btn-primary" disabled={saving}>
-                    {saving ? 'در حال ذخیره...' : 'ذخیره'}
-                  </button>
-                </div>
-              </form>
+              <h5>{editing ? 'ویرایش پست' : 'پست جدید'}</h5>
             </div>
+
+            {error && (
+              <div className="sp-alert error mb-3">
+                <i className="bi bi-exclamation-circle-fill flex-shrink-0" />
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleSave}>
+              <div className="mb-3">
+                <label className="form-label">عنوان</label>
+                <input
+                  className="form-control"
+                  required
+                  placeholder="عنوان پست را بنویسید..."
+                  value={form.title}
+                  onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">محتوا</label>
+                <textarea
+                  className="form-control"
+                  rows={9}
+                  required
+                  placeholder="محتوای پست خود را بنویسید..."
+                  value={form.content}
+                  onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+                />
+              </div>
+              <div className="row g-3 mb-4">
+                <div className="col-sm-6">
+                  <label className="form-label">تصویر جلد (اختیاری)</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={(e) => setForm((f) => ({ ...f, cover_image: e.target.files[0] || null }))}
+                  />
+                </div>
+                <div className="col-sm-6">
+                  <label className="form-label">وضعیت انتشار</label>
+                  <select
+                    className="form-select"
+                    value={form.status}
+                    onChange={(e) => setForm((f) => ({ ...f, status: e.target.value }))}
+                  >
+                    <option value="draft">پیش‌نویس</option>
+                    <option value="published">منتشر شده</option>
+                  </select>
+                </div>
+              </div>
+              <div className="d-flex gap-2 justify-content-end">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  style={{ borderRadius: 'var(--radius-sm)' }}
+                  onClick={() => setShowModal(false)}
+                >
+                  انصراف
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  style={{ borderRadius: 'var(--radius-sm)', fontWeight: 700 }}
+                  disabled={saving}
+                >
+                  {saving
+                    ? <><span className="spinner-border spinner-border-sm me-2" />ذخیره...</>
+                    : <><i className="bi bi-check-lg me-1" />ذخیره پست</>
+                  }
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

@@ -11,31 +11,47 @@ function PostModal({ post, onClose }) {
   if (!post) return null
 
   return (
-    <div className="modal show d-block" style={{ background: 'rgba(0,0,0,.6)' }} onClick={onClose} dir="rtl">
-      <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" onClick={e => e.stopPropagation()}>
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">{post.title}</h5>
-            <button className="btn-close" onClick={onClose} />
-          </div>
-          <div className="modal-body">
-            {post.cover_image && (
-              <img
-                src={post.cover_image}
-                alt={post.title}
-                className="img-fluid rounded mb-3 w-100"
-                style={{ maxHeight: '300px', objectFit: 'cover' }}
-              />
-            )}
-            <p className="text-muted small mb-3">
-              {new Date(post.created_at).toLocaleDateString('fa-IR')}
-              <span className="ms-3">
-                <i className="bi bi-eye me-1" />
-                {post.view_count.toLocaleString('fa-IR')} بازدید
-              </span>
-            </p>
-            <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.9' }}>{post.content}</div>
-          </div>
+    <div
+      className="sp-modal-overlay"
+      onClick={onClose}
+      dir="rtl"
+      style={{ alignItems: 'flex-start', paddingTop: '5rem' }}
+    >
+      <div
+        className="sp-modal-box"
+        style={{ maxWidth: 680, width: '100%' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button className="sp-modal-close" onClick={onClose} aria-label="بستن">
+          <i className="bi bi-x" />
+        </button>
+
+        {post.cover_image && (
+          <img
+            src={post.cover_image}
+            alt={post.title}
+            style={{
+              width: 'calc(100% + 4rem)',
+              marginLeft: '-2rem',
+              marginRight: '-2rem',
+              marginTop: '-2.25rem',
+              marginBottom: '1.5rem',
+              maxHeight: 260,
+              objectFit: 'cover',
+              borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
+            }}
+          />
+        )}
+
+        <h4 style={{ fontWeight: 800, marginBottom: '.75rem' }}>{post.title}</h4>
+
+        <div className="d-flex gap-3 mb-3" style={{ color: 'var(--clr-text-muted)', fontSize: '.82rem' }}>
+          <span><i className="bi bi-calendar3 me-1" />{new Date(post.created_at).toLocaleDateString('fa-IR')}</span>
+          <span><i className="bi bi-eye me-1" />{post.view_count.toLocaleString('fa-IR')} بازدید</span>
+        </div>
+
+        <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.95', color: 'var(--clr-text)', fontSize: '.95rem' }}>
+          {post.content}
         </div>
       </div>
     </div>
@@ -54,110 +70,131 @@ export default function CoachPage() {
       client.get('/coaches/approved/').catch(() => ({ data: [] })),
       client.get(`/posts/?coach_id=${coachId}`),
     ]).then(([coachesRes, postsRes]) => {
-      const found = coachesRes.data.find(c => String(c.user_id) === String(coachId))
+      const found = coachesRes.data.find((c) => String(c.user_id) === String(coachId))
       setCoach(found || null)
       setPosts(postsRes.data)
     }).finally(() => setLoading(false))
   }, [coachId])
 
-  if (loading) {
-    return (
-      <div className="text-center py-5" style={{ marginTop: '80px' }}>
-        <div className="spinner-border" />
-      </div>
-    )
-  }
+  if (loading) return (
+    <div className="sp-loading" style={{ marginTop: 'var(--navbar-h)' }}>
+      <div className="sp-spinner" />
+    </div>
+  )
 
-  if (!coach) {
-    return (
-      <div className="container text-center py-5" style={{ marginTop: '80px' }}>
-        <h4>مربی یافت نشد</h4>
-        <Link to="/coaches" className="btn btn-outline-secondary mt-3">بازگشت به مربیان</Link>
+  if (!coach) return (
+    <div className="container text-center py-5" style={{ marginTop: 'calc(var(--navbar-h) + 2rem)' }} dir="rtl">
+      <div className="sp-empty">
+        <div className="sp-empty-icon"><i className="bi bi-person-x" /></div>
+        <p>مربی یافت نشد.</p>
+        <Link to="/coaches" className="btn btn-dark">بازگشت به مربیان</Link>
       </div>
-    )
-  }
+    </div>
+  )
 
   const totalViews = posts.reduce((s, p) => s + p.view_count, 0)
 
   return (
-    <div className="container py-4" style={{ marginTop: '70px' }} dir="rtl">
-      {/* Coach profile header */}
-      <div className="card mb-4 border-0 shadow-sm">
-        <div className="card-body p-4">
-          <div className="d-flex align-items-center gap-3 mb-3">
-            <div
-              className="rounded-circle bg-primary d-flex align-items-center justify-content-center text-white fw-bold fs-3"
-              style={{ width: 72, height: 72, flexShrink: 0 }}
-            >
-              {coach.first_name?.[0]}{coach.last_name?.[0]}
-            </div>
-            <div>
-              <h3 className="mb-0 fw-bold">{coach.first_name} {coach.last_name}</h3>
-              {coach.expertise && <p className="text-muted mb-0">{coach.expertise}</p>}
+    <div>
+      {/* Coach hero */}
+      <div className="sp-coach-hero">
+        <div className="container" dir="rtl">
+          <div className="d-flex align-items-center gap-4 flex-wrap">
+            <div className="sp-coach-avatar lg">{coach.first_name?.[0]}{coach.last_name?.[0]}</div>
+            <div className="flex-grow-1">
+              <h2 style={{ color: '#fff', margin: '0 0 .3rem', fontWeight: 800 }}>
+                {coach.first_name} {coach.last_name}
+              </h2>
+              {coach.expertise && (
+                <p style={{ color: 'rgba(255,255,255,.6)', margin: 0, fontSize: '.95rem' }}>
+                  {coach.expertise}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="d-flex gap-4 mb-3 flex-wrap">
+          {/* Stats row */}
+          <div className="d-flex flex-wrap mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,.1)', gap: '0' }}>
+            <div className="sp-coach-hero-stat">
+              <div className="sp-coach-hero-stat-val">{posts.length}</div>
+              <div className="sp-coach-hero-stat-lbl">پست</div>
+            </div>
+            <div className="sp-coach-hero-stat">
+              <div className="sp-coach-hero-stat-val">{totalViews.toLocaleString('fa-IR')}</div>
+              <div className="sp-coach-hero-stat-lbl">بازدید</div>
+            </div>
             {coach.experience_years > 0 && (
-              <span className="text-muted small">
-                <i className="bi bi-briefcase me-1" />
-                {coach.experience_years} سال تجربه
-              </span>
+              <div className="sp-coach-hero-stat">
+                <div className="sp-coach-hero-stat-val">{coach.experience_years}</div>
+                <div className="sp-coach-hero-stat-lbl">سال تجربه</div>
+              </div>
             )}
-            <span className="text-muted small">
-              <i className="bi bi-file-earmark-text me-1" />
-              {posts.length} پست
-            </span>
-            <span className="text-muted small">
-              <i className="bi bi-eye me-1" />
-              {totalViews.toLocaleString('fa-IR')} بازدید
-            </span>
           </div>
-
-          {coach.bio && <p className="mb-0" style={{ lineHeight: '1.8' }}>{coach.bio}</p>}
         </div>
       </div>
 
-      {/* Published posts */}
-      <h5 className="fw-bold mb-3">پست‌های منتشر شده</h5>
+      <div className="container py-4" dir="rtl">
+        {/* Bio */}
+        {coach.bio && (
+          <div className="sp-card p-4 mb-4">
+            <div className="form-section-title">درباره مربی</div>
+            <p style={{ color: 'var(--clr-text-2)', lineHeight: '1.9', margin: 0 }}>{coach.bio}</p>
+          </div>
+        )}
 
-      {posts.length === 0 ? (
-        <p className="text-muted">هنوز پستی منتشر نشده است.</p>
-      ) : (
-        <div className="row g-3">
-          {posts.map(post => (
-            <div key={post.id} className="col-12 col-md-6">
-              <div
-                className="card h-100 border-0 shadow-sm"
-                style={{ cursor: 'pointer' }}
-                onClick={() => setActivePost(post)}
-              >
-                {post.cover_image && (
-                  <img
-                    src={post.cover_image}
-                    alt={post.title}
-                    className="card-img-top"
-                    style={{ height: '180px', objectFit: 'cover' }}
-                  />
-                )}
-                <div className="card-body">
-                  <h6 className="card-title fw-bold">{post.title}</h6>
-                  <p className="card-text text-muted small" style={{ overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
-                    {post.content}
-                  </p>
-                </div>
-                <div className="card-footer bg-white border-0 d-flex justify-content-between text-muted small">
-                  <span>{new Date(post.created_at).toLocaleDateString('fa-IR')}</span>
-                  <span>
-                    <i className="bi bi-eye me-1" />
-                    {post.view_count.toLocaleString('fa-IR')}
-                  </span>
+        {/* Posts */}
+        <div className="d-flex align-items-center justify-content-between mb-3">
+          <h5 className="sp-section-title mb-0">پست‌های منتشر شده</h5>
+          <span style={{ color: 'var(--clr-text-muted)', fontSize: '.85rem' }}>
+            {posts.length} پست
+          </span>
+        </div>
+
+        {posts.length === 0 ? (
+          <div className="sp-empty">
+            <div className="sp-empty-icon"><i className="bi bi-journal-x" /></div>
+            <p>هنوز پستی منتشر نشده است.</p>
+          </div>
+        ) : (
+          <div className="row g-3">
+            {posts.map((post) => (
+              <div key={post.id} className="col-12 col-md-6">
+                <div className="sp-post-card" onClick={() => setActivePost(post)}>
+                  {post.cover_image && (
+                    <img
+                      src={post.cover_image}
+                      alt={post.title}
+                      style={{ width: '100%', height: 180, objectFit: 'cover' }}
+                    />
+                  )}
+                  <div className="card-body">
+                    <h6 style={{ fontWeight: 700, marginBottom: '.5rem', color: 'var(--clr-text)' }}>
+                      {post.title}
+                    </h6>
+                    <p style={{
+                      color: 'var(--clr-text-2)', fontSize: '.875rem', lineHeight: '1.6',
+                      overflow: 'hidden', display: '-webkit-box',
+                      WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', margin: 0,
+                    }}>
+                      {post.content}
+                    </p>
+                  </div>
+                  <div className="card-footer">
+                    <span style={{ color: 'var(--clr-text-muted)', fontSize: '.78rem' }}>
+                      <i className="bi bi-calendar3 me-1" />
+                      {new Date(post.created_at).toLocaleDateString('fa-IR')}
+                    </span>
+                    <span className="sp-view-count">
+                      <i className="bi bi-eye" />
+                      {post.view_count.toLocaleString('fa-IR')}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       <PostModal post={activePost} onClose={() => setActivePost(null)} />
     </div>
