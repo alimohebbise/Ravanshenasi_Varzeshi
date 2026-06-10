@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.validators import FileExtensionValidator
 from django.db import models
 
 
@@ -14,7 +15,12 @@ class Post(models.Model):
     )
     title = models.CharField(max_length=255)
     content = models.TextField()
-    cover_image = models.ImageField(upload_to="posts/covers/", blank=True, null=True)
+    cover_image = models.ImageField(
+        upload_to="posts/covers/",
+        blank=True,
+        null=True,
+        validators=[FileExtensionValidator(allowed_extensions=["png", "jpg", "jpeg"])],
+    )
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=DRAFT)
     view_count = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

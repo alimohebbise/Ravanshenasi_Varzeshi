@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
+import RichTextEditor from '../components/RichTextEditor'
 
 const emptyForm = { title: '', content: '', status: 'draft', cover_image: null }
 
@@ -42,7 +43,13 @@ export default function CoachDashboard() {
   }
 
   async function handleSave(e) {
-    e.preventDefault(); setSaving(true); setError('')
+    e.preventDefault(); setError('')
+    const isContentEmpty = form.content.replace(/<(.|\n)*?>/g, '').trim().length === 0
+    if (isContentEmpty) {
+      setError('محتوای پست نمی‌تواند خالی باشد.')
+      return
+    }
+    setSaving(true)
     try {
       const fd = new FormData()
       fd.append('title', form.title)
@@ -281,13 +288,10 @@ export default function CoachDashboard() {
               </div>
               <div className="mb-3">
                 <label className="form-label">محتوا</label>
-                <textarea
-                  className="form-control"
-                  rows={9}
-                  required
-                  placeholder="محتوای پست خود را بنویسید..."
+                <RichTextEditor
                   value={form.content}
-                  onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
+                  onChange={(html) => setForm((f) => ({ ...f, content: html }))}
+                  placeholder="محتوای پست خود را بنویسید..."
                 />
               </div>
               <div className="row g-3 mb-4">

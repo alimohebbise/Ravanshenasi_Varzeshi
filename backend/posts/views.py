@@ -1,3 +1,7 @@
+import os
+import uuid
+
+from django.core.files.storage import default_storage
 from django.db.models import F
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
@@ -7,6 +11,8 @@ from django.shortcuts import get_object_or_404
 from .models import Post
 from .serializers import PostSerializer
 from .permissions import IsCoach, IsPostOwner
+
+ALLOWED_CONTENT_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
 
 
 class PublicPostListView(generics.ListAPIView):
@@ -59,6 +65,27 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
         if user.is_authenticated and user.role in ("coach", "owner"):
             return Post.objects.all()
         return Post.objects.filter(status=Post.PUBLISHED)
+
+
+@api_view(["POST"])
+@permission_classes([IsCoach])
+def upload_content_image(request):
+    """Upload an image to embed inside post content via the rich text editor."""
+    image = request.FILES.get("image")
+    if not image:
+        return Response({"error": "تصویری ارسال نشده است."}, status=status.HTTP_400_BAD_REQUEST)
+
+    ext = os.path.splitext(image.name)[1].lower()
+    if ext not in ALLOWED_CONTENT_IMAGE_EXTENSIONS:
+        return Response(
+            {"error": "فقط تصاویر PNG و JPG مجاز هستند."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    filename = f"posts/content/{uuid.uuid4().hex}{ext}"
+    saved_path = default_storage.save(filename, image)
+    url = request.build_absolute_uri(default_storage.url(saved_path))
+    return Response({"url": url}, status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])

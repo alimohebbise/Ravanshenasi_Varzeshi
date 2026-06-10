@@ -1,6 +1,22 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import DOMPurify from 'dompurify'
 import client from '../api/client'
+
+function stripHtml(html) {
+  const withBreaks = html
+    .replace(/<\/(p|div|h[1-6]|li|blockquote|tr)>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, ' ')
+  const div = document.createElement('div')
+  div.innerHTML = withBreaks
+  return (div.textContent || '').replace(/\s+/g, ' ').trim()
+}
+
+function getThumbnail(post) {
+  if (post.cover_image) return post.cover_image
+  const match = post.content.match(/<img[^>]+src=["']([^"']+)["']/i)
+  return match ? match[1] : null
+}
 
 function PostModal({ post, onClose }) {
   useEffect(() => {
@@ -43,16 +59,18 @@ function PostModal({ post, onClose }) {
           />
         )}
 
-        <h4 style={{ fontWeight: 800, marginBottom: '.75rem' }}>{post.title}</h4>
+        <h4 style={{ fontWeight: 800, marginBottom: '.75rem', overflowWrap: 'break-word' }}>{post.title}</h4>
 
         <div className="d-flex gap-3 mb-3" style={{ color: 'var(--clr-text-muted)', fontSize: '.82rem' }}>
           <span><i className="bi bi-calendar3 me-1" />{new Date(post.created_at).toLocaleDateString('fa-IR')}</span>
           <span><i className="bi bi-eye me-1" />{post.view_count.toLocaleString('fa-IR')} بازدید</span>
         </div>
 
-        <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.95', color: 'var(--clr-text)', fontSize: '.95rem' }}>
-          {post.content}
-        </div>
+        <div
+          className="sp-rich-content"
+          style={{ lineHeight: '1.95', color: 'var(--clr-text)', fontSize: '.95rem' }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+        />
       </div>
     </div>
   )
@@ -157,26 +175,36 @@ export default function CoachPage() {
           </div>
         ) : (
           <div className="row g-3">
-            {posts.map((post) => (
+            {posts.map((post) => {
+              const thumb = getThumbnail(post)
+              return (
               <div key={post.id} className="col-12 col-md-6">
                 <div className="sp-post-card" onClick={() => setActivePost(post)}>
-                  {post.cover_image && (
+                  {thumb ? (
                     <img
-                      src={post.cover_image}
+                      src={thumb}
                       alt={post.title}
                       style={{ width: '100%', height: 180, objectFit: 'cover' }}
                     />
+                  ) : (
+                    <div className="sp-post-card-placeholder">
+                      <i className="bi bi-journal-richtext" />
+                    </div>
                   )}
                   <div className="card-body">
-                    <h6 style={{ fontWeight: 700, marginBottom: '.5rem', color: 'var(--clr-text)' }}>
+                    <h6 style={{
+                      fontWeight: 700, marginBottom: '.5rem', color: 'var(--clr-text)',
+                      overflowWrap: 'break-word',
+                    }}>
                       {post.title}
                     </h6>
                     <p style={{
                       color: 'var(--clr-text-2)', fontSize: '.875rem', lineHeight: '1.6',
                       overflow: 'hidden', display: '-webkit-box',
                       WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', margin: 0,
+                      overflowWrap: 'break-word',
                     }}>
-                      {post.content}
+                      {stripHtml(post.content)}
                     </p>
                   </div>
                   <div className="card-footer">
@@ -191,7 +219,8 @@ export default function CoachPage() {
                   </div>
                 </div>
               </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
