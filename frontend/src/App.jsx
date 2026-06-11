@@ -7,6 +7,7 @@ import AdminPanel from './pages/AdminPanel'
 import CoachDashboard from './pages/CoachDashboard'
 import CoachPage from './pages/CoachPage'
 import CoachesList from './pages/CoachesList'
+import MyProfile from './pages/MyProfile'
 
 export default function App() {
   return (
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/coach-application" element={<CoachApplication />} />
         <Route path="/admin-panel" element={<AdminPanel />} />
         <Route path="/coach-dashboard" element={<CoachDashboard />} />
+        <Route path="/my-profile" element={<MyProfile />} />
         <Route path="/coaches" element={<CoachesList />} />
         <Route path="/coaches/:coachId" element={<CoachPage />} />
         <Route path="*" element={<Navigate to="/fa/articles" replace />} />

@@ -30,13 +30,15 @@ export default function CoachApplication() {
   })
   const [files, setFiles] = useState({ educational_documents: null, digital_signature: null })
   const [error, setError] = useState('')
-  const [success, setSuccess] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     if (!user) { navigate('/fa/articles'); return }
     client.get('/coaches/my-application/')
-      .then(({ data }) => setExisting(data))
+      .then(({ data }) => {
+        if (data) navigate('/my-profile', { replace: true })
+        else setExisting(null)
+      })
       .catch(() => setExisting(null))
   }, [user, navigate])
 
@@ -52,7 +54,7 @@ export default function CoachApplication() {
       if (files.educational_documents) fd.append('educational_documents', files.educational_documents)
       if (files.digital_signature) fd.append('digital_signature', files.digital_signature)
       await client.post('/coaches/apply/', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
-      setSuccess(true)
+      navigate('/my-profile', { replace: true })
     } catch (err) {
       const data = err.response?.data
       setError(data ? Object.values(data).flat().join(' ') : 'خطایی رخ داد. دوباره تلاش کنید.')
@@ -67,63 +69,6 @@ export default function CoachApplication() {
       <div className="sp-spinner" />
     </div>
   )
-
-  if (success || existing) {
-    const status = existing?.status
-    const statusMap = { pending: 'در انتظار بررسی', approved: 'تأیید شده', rejected: 'رد شده' }
-    return (
-      <div style={{ marginTop: 'var(--navbar-h)' }}>
-        <div style={{ background: 'var(--clr-navy)', color: '#fff', padding: '2rem 0' }}>
-          <div className="container" dir="rtl">
-            <h2 style={{ color: '#fff', marginBottom: '.25rem' }}>درخواست مربیگری</h2>
-            <p style={{ color: 'rgba(255,255,255,.55)', margin: 0, fontSize: '.9rem' }}>وضعیت درخواست شما</p>
-          </div>
-        </div>
-        <div className="container py-5" dir="rtl">
-          <div className="mx-auto" style={{ maxWidth: 500 }}>
-            <div className="sp-card p-5 text-center">
-              <div
-                className="mx-auto mb-4 d-flex align-items-center justify-content-center"
-                style={{
-                  width: 80, height: 80, borderRadius: '50%',
-                  background: status === 'approved' ? 'var(--clr-success-light)'
-                    : status === 'rejected' ? 'var(--clr-danger-light)'
-                    : 'var(--clr-warning-light)',
-                  color: status === 'approved' ? 'var(--clr-success)'
-                    : status === 'rejected' ? 'var(--clr-danger)'
-                    : 'var(--clr-warning)',
-                  fontSize: '2.2rem',
-                }}
-              >
-                <i className={`bi ${
-                  status === 'approved' ? 'bi-patch-check-fill'
-                  : status === 'rejected' ? 'bi-x-octagon-fill'
-                  : 'bi-hourglass-split'
-                }`} />
-              </div>
-              <h5 className="fw-bold mb-2">درخواست ثبت شده است</h5>
-              {existing?.status && (
-                <div className="mb-3">
-                  <span className={`sp-status ${status}`}>{statusMap[status]}</span>
-                </div>
-              )}
-              <p style={{ color: 'var(--clr-text-2)', fontSize: '.9rem', maxWidth: 340, margin: '0 auto 1.5rem' }}>
-                {status === 'approved'
-                  ? 'تبریک! درخواست شما تأیید شده و اکنون دسترسی مربی دارید.'
-                  : status === 'rejected'
-                  ? 'متأسفانه درخواست شما رد شده است. برای اطلاعات بیشتر با مدیر تماس بگیرید.'
-                  : 'درخواست شما در حال بررسی است. پس از تأیید توسط مدیر، اطلاع‌رسانی می‌شود.'
-                }
-              </p>
-              <button className="btn btn-dark" onClick={() => navigate('/coach-dashboard')}>
-                <i className="bi bi-speedometer2 me-2" />بازگشت به داشبورد
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div style={{ marginTop: 'var(--navbar-h)' }}>

@@ -28,6 +28,7 @@ export function AuthProvider({ children }) {
     localStorage.setItem('refresh_token', data.refresh)
     const me = await client.get('/auth/me/')
     setUser(me.data)
+    return me.data
   }
 
   async function register(payload) {

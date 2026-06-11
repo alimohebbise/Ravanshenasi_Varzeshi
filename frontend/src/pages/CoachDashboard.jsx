@@ -6,52 +6,10 @@ import RichTextEditor from '../components/RichTextEditor'
 
 const emptyForm = { title: '', content: '', status: 'draft', cover_image: null }
 
-const APPLICATION_STATUS_LABELS = { pending: 'در انتظار بررسی', approved: 'تأیید شده', rejected: 'رد شده' }
-
-function ApplicationStatusCard({ application }) {
-  const status = application.status
-  return (
-    <div className="sp-card p-5 text-center">
-      <div
-        className="mx-auto mb-4 d-flex align-items-center justify-content-center"
-        style={{
-          width: 80, height: 80, borderRadius: '50%',
-          background: status === 'approved' ? 'var(--clr-success-light)'
-            : status === 'rejected' ? 'var(--clr-danger-light)'
-            : 'var(--clr-warning-light)',
-          color: status === 'approved' ? 'var(--clr-success)'
-            : status === 'rejected' ? 'var(--clr-danger)'
-            : 'var(--clr-warning)',
-          fontSize: '2.2rem',
-        }}
-      >
-        <i className={`bi ${
-          status === 'approved' ? 'bi-patch-check-fill'
-          : status === 'rejected' ? 'bi-x-octagon-fill'
-          : 'bi-hourglass-split'
-        }`} />
-      </div>
-      <h5 className="fw-bold mb-2">درخواست مربیگری شما ثبت شده است</h5>
-      <div className="mb-3">
-        <span className={`sp-status ${status}`}>{APPLICATION_STATUS_LABELS[status]}</span>
-      </div>
-      <p style={{ color: 'var(--clr-text-2)', fontSize: '.9rem', maxWidth: 360, margin: '0 auto' }}>
-        {status === 'approved'
-          ? 'تبریک! درخواست شما تأیید شده است. لطفاً از حساب کاربری خود خارج و دوباره وارد شوید تا امکانات مربیان فعال شود.'
-          : status === 'rejected'
-          ? 'متأسفانه درخواست شما رد شده است. برای اطلاعات بیشتر با مدیر تماس بگیرید.'
-          : 'درخواست شما در حال بررسی توسط مدیر است. پس از تأیید، امکانات مربیان برای شما فعال خواهد شد.'
-        }
-      </p>
-    </div>
-  )
-}
-
 export default function CoachDashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const isCoach = user?.role === 'coach' || user?.role === 'owner'
-  const [tab, setTab] = useState('posts')
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
@@ -59,18 +17,11 @@ export default function CoachDashboard() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
-  const [application, setApplication] = useState(undefined)
 
   useEffect(() => {
-    if (!user) navigate('/fa/articles')
-  }, [user, navigate])
-
-  useEffect(() => {
-    if (!user || isCoach) return
-    client.get('/coaches/my-application/')
-      .then(({ data }) => setApplication(data))
-      .catch(() => setApplication(null))
-  }, [user, isCoach])
+    if (!user) { navigate('/fa/articles'); return }
+    if (!isCoach) navigate('/my-profile')
+  }, [user, isCoach, navigate])
 
   const loadPosts = useCallback(() => {
     setLoading(true)
@@ -128,57 +79,8 @@ export default function CoachDashboard() {
   const publishedPosts = posts.filter((p) => p.status === 'published')
   const draftPosts     = posts.filter((p) => p.status === 'draft')
   const totalViews     = publishedPosts.reduce((s, p) => s + p.view_count, 0)
-  const maxViews       = Math.max(...publishedPosts.map((p) => p.view_count), 1)
 
-  if (!user) return null
-
-  if (!isCoach) {
-    return (
-      <div style={{ marginTop: 'var(--navbar-h)' }}>
-        <div style={{ background: 'var(--clr-navy)', color: '#fff', padding: '2rem 0' }}>
-          <div className="container" dir="rtl">
-            <h2 style={{ color: '#fff', margin: '0 0 .2rem', fontWeight: 800 }}>داشبورد</h2>
-            <p style={{ color: 'rgba(255,255,255,.5)', margin: 0, fontSize: '.88rem' }}>
-              وضعیت حساب کاربری شما
-            </p>
-          </div>
-        </div>
-
-        <div className="container py-5" dir="rtl">
-          <div className="mx-auto" style={{ maxWidth: 500 }}>
-            {application === undefined ? (
-              <div className="sp-loading"><div className="sp-spinner" /></div>
-            ) : application ? (
-              <ApplicationStatusCard application={application} />
-            ) : (
-              <div className="sp-card p-5 text-center">
-                <div
-                  className="mx-auto mb-4 d-flex align-items-center justify-content-center"
-                  style={{
-                    width: 80, height: 80, borderRadius: '50%',
-                    background: 'var(--clr-accent-light)', color: 'var(--clr-accent)', fontSize: '2.2rem',
-                  }}
-                >
-                  <i className="bi bi-person-badge" />
-                </div>
-                <h5 className="fw-bold mb-2">هنوز مربی نیستید</h5>
-                <p style={{ color: 'var(--clr-text-2)', fontSize: '.9rem', maxWidth: 360, margin: '0 auto 1.5rem' }}>
-                  برای انتشار مقاله و دسترسی به امکانات مربیان، ابتدا درخواست مربیگری خود را برای مدیر ارسال کنید.
-                </p>
-                <Link
-                  to="/coach-application"
-                  className="btn btn-primary"
-                  style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
-                >
-                  <i className="bi bi-send me-2" />ارسال درخواست مربیگری
-                </Link>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    )
-  }
+  if (!user || !isCoach) return null
 
   return (
     <div style={{ marginTop: 'var(--navbar-h)' }}>
@@ -188,16 +90,27 @@ export default function CoachDashboard() {
           <div>
             <h2 style={{ color: '#fff', margin: '0 0 .2rem', fontWeight: 800 }}>داشبورد مربی</h2>
             <p style={{ color: 'rgba(255,255,255,.5)', margin: 0, fontSize: '.88rem' }}>
-              مدیریت پست‌ها و مشاهده آمار بازدید
+              مدیریت پست‌های شما
             </p>
           </div>
-          <button
-            className="btn btn-primary d-flex align-items-center gap-2"
-            style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
-            onClick={openCreate}
-          >
-            <i className="bi bi-plus-lg" /> پست جدید
-          </button>
+          <div className="d-flex gap-2">
+            {user.role === 'coach' && (
+              <Link
+                to={`/coaches/${user.id}`}
+                className="btn btn-outline-light d-flex align-items-center gap-2"
+                style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
+              >
+                <i className="bi bi-box-arrow-up-left" /> صفحه من
+              </Link>
+            )}
+            <button
+              className="btn btn-primary d-flex align-items-center gap-2"
+              style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
+              onClick={openCreate}
+            >
+              <i className="bi bi-plus-lg" /> پست جدید
+            </button>
+          </div>
         </div>
       </div>
 
@@ -233,18 +146,8 @@ export default function CoachDashboard() {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="sp-tabs">
-          <button className={`sp-tab-btn ${tab === 'posts' ? 'active' : ''}`} onClick={() => setTab('posts')}>
-            <i className="bi bi-list-ul me-1" />مقالات من
-          </button>
-          <button className={`sp-tab-btn ${tab === 'stats' ? 'active' : ''}`} onClick={() => setTab('stats')}>
-            <i className="bi bi-bar-chart me-1" />آمار بازدید
-          </button>
-        </div>
-
-        {/* Posts tab */}
-        {tab === 'posts' && (
+        {/* Posts */}
+        {(
           loading ? (
             <div className="sp-loading"><div className="sp-spinner" /></div>
           ) : posts.length === 0 ? (
@@ -307,50 +210,6 @@ export default function CoachDashboard() {
               </table>
             </div>
           )
-        )}
-
-        {/* Stats tab */}
-        {tab === 'stats' && (
-          <div>
-            {publishedPosts.length === 0 ? (
-              <div className="sp-empty">
-                <div className="sp-empty-icon"><i className="bi bi-bar-chart" /></div>
-                <p>برای مشاهده آمار، ابتدا یک پست منتشر کنید.</p>
-              </div>
-            ) : (
-              <div className="sp-table">
-                <table className="table mb-0">
-                  <thead>
-                    <tr>
-                      <th>عنوان پست</th>
-                      <th>بازدید</th>
-                      <th style={{ minWidth: 180 }}>نمودار</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[...publishedPosts]
-                      .sort((a, b) => b.view_count - a.view_count)
-                      .map((post) => (
-                        <tr key={post.id}>
-                          <td style={{ fontWeight: 600 }}>{post.title}</td>
-                          <td style={{ fontWeight: 700, color: 'var(--clr-accent)' }}>
-                            {post.view_count.toLocaleString('fa-IR')}
-                          </td>
-                          <td>
-                            <div className="sp-progress">
-                              <div
-                                className="sp-progress-bar"
-                                style={{ width: `${Math.round((post.view_count / maxViews) * 100)}%` }}
-                              />
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
         )}
       </div>
 

@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
@@ -6,6 +7,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .models import CoachApplication
 from .serializers import CoachApplicationSerializer, ApprovedCoachSerializer
+
+User = get_user_model()
 
 
 class IsOwner(permissions.BasePermission):
@@ -65,6 +68,25 @@ class ApprovedCoachListView(generics.ListAPIView):
 
     def get_queryset(self):
         return CoachApplication.objects.filter(status="approved").select_related("user").order_by("first_name")
+
+
+@api_view(["GET"])
+@permission_classes([permissions.AllowAny])
+def coach_public_profile(request, user_id):
+    """Public profile of any coach (own page) — works regardless of
+    their CoachApplication approval status, since a coach's posts can
+    already be public via PublicPostListView."""
+    user = get_object_or_404(User, pk=user_id, role="coach")
+    app = CoachApplication.objects.filter(user=user).first()
+    return Response({
+        "user_id": user.id,
+        "username": user.username,
+        "first_name": (app.first_name if app else "") or user.first_name,
+        "last_name": (app.last_name if app else "") or user.last_name,
+        "bio": app.bio if app else "",
+        "expertise": app.expertise if app else "",
+        "experience_years": app.experience_years if app else 0,
+    })
 
 
 @api_view(["GET"])

@@ -31,7 +31,7 @@ export default function SignupModal({ onClose, onSwitchToLogin }) {
     try {
       await register(form)
       onClose()
-      navigate('/coach-dashboard')
+      navigate('/my-profile')
     } catch (err) {
       const data = err.response?.data
       if (data) {

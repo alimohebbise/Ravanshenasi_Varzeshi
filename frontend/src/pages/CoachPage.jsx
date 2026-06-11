@@ -85,11 +85,10 @@ export default function CoachPage() {
 
   useEffect(() => {
     Promise.all([
-      client.get('/coaches/approved/').catch(() => ({ data: [] })),
-      client.get(`/posts/?coach_id=${coachId}`),
-    ]).then(([coachesRes, postsRes]) => {
-      const found = coachesRes.data.find((c) => String(c.user_id) === String(coachId))
-      setCoach(found || null)
+      client.get(`/coaches/${coachId}/profile/`).catch(() => ({ data: null })),
+      client.get(`/posts/?coach_id=${coachId}`).catch(() => ({ data: [] })),
+    ]).then(([coachRes, postsRes]) => {
+      setCoach(coachRes.data)
       setPosts(postsRes.data)
     }).finally(() => setLoading(false))
   }, [coachId])

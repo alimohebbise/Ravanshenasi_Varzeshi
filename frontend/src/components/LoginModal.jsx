@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginModal({ onClose, onSwitchToSignup }) {
   const { login } = useAuth()
+  const navigate = useNavigate()
   const [form, setForm] = useState({ username: '', password: '' })
   const [showPw, setShowPw] = useState(false)
   const [error, setError] = useState('')
@@ -13,8 +15,9 @@ export default function LoginModal({ onClose, onSwitchToSignup }) {
     setError('')
     setLoading(true)
     try {
-      await login(form.username, form.password)
+      const me = await login(form.username, form.password)
       onClose()
+      if (me.role === 'coach') navigate('/coach-dashboard')
     } catch (err) {
       setError(err.response?.data?.detail || 'نام کاربری یا رمز عبور اشتباه است.')
     } finally {

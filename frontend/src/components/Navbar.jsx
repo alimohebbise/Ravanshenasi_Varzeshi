@@ -53,11 +53,41 @@ export default function Navbar() {
           مربیان
         </Link>
       </li>
-      {user && (
+      {user && user.role === 'coach' && (
+        <>
+          <li>
+            <Link className="sp-nav-link accent" to={`/coaches/${user.id}`} onClick={onClose}>
+              <i className="bi bi-person-badge" />
+              صفحه عمومی
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
+              <i className="bi bi-pencil-square" />
+              پست‌ها
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link accent" to="/my-profile" onClick={onClose}>
+              <i className="bi bi-person-vcard" />
+              پروفایل من
+            </Link>
+          </li>
+        </>
+      )}
+      {user && user.role === 'athlete' && (
+        <li>
+          <Link className="sp-nav-link accent" to="/my-profile" onClick={onClose}>
+            <i className="bi bi-person-vcard" />
+            پروفایل من
+          </Link>
+        </li>
+      )}
+      {user && user.role === 'owner' && (
         <li>
           <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
             <i className="bi bi-pencil-square" />
-            {user.role === 'coach' || user.role === 'owner' ? 'داشبورد مربی' : 'داشبورد'}
+            داشبورد مربی
           </Link>
         </li>
       )}
