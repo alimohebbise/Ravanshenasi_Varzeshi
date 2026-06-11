@@ -115,8 +115,8 @@ export default function CoachApplication() {
                   : 'درخواست شما در حال بررسی است. پس از تأیید توسط مدیر، اطلاع‌رسانی می‌شود.'
                 }
               </p>
-              <button className="btn btn-dark" onClick={() => navigate('/fa/articles')}>
-                <i className="bi bi-house me-2" />بازگشت به مقالات
+              <button className="btn btn-dark" onClick={() => navigate('/coach-dashboard')}>
+                <i className="bi bi-speedometer2 me-2" />بازگشت به داشبورد
               </button>
             </div>
           </div>

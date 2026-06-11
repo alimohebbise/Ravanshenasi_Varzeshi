@@ -1,14 +1,56 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
 import RichTextEditor from '../components/RichTextEditor'
 
 const emptyForm = { title: '', content: '', status: 'draft', cover_image: null }
 
+const APPLICATION_STATUS_LABELS = { pending: 'در انتظار بررسی', approved: 'تأیید شده', rejected: 'رد شده' }
+
+function ApplicationStatusCard({ application }) {
+  const status = application.status
+  return (
+    <div className="sp-card p-5 text-center">
+      <div
+        className="mx-auto mb-4 d-flex align-items-center justify-content-center"
+        style={{
+          width: 80, height: 80, borderRadius: '50%',
+          background: status === 'approved' ? 'var(--clr-success-light)'
+            : status === 'rejected' ? 'var(--clr-danger-light)'
+            : 'var(--clr-warning-light)',
+          color: status === 'approved' ? 'var(--clr-success)'
+            : status === 'rejected' ? 'var(--clr-danger)'
+            : 'var(--clr-warning)',
+          fontSize: '2.2rem',
+        }}
+      >
+        <i className={`bi ${
+          status === 'approved' ? 'bi-patch-check-fill'
+          : status === 'rejected' ? 'bi-x-octagon-fill'
+          : 'bi-hourglass-split'
+        }`} />
+      </div>
+      <h5 className="fw-bold mb-2">درخواست مربیگری شما ثبت شده است</h5>
+      <div className="mb-3">
+        <span className={`sp-status ${status}`}>{APPLICATION_STATUS_LABELS[status]}</span>
+      </div>
+      <p style={{ color: 'var(--clr-text-2)', fontSize: '.9rem', maxWidth: 360, margin: '0 auto' }}>
+        {status === 'approved'
+          ? 'تبریک! درخواست شما تأیید شده است. لطفاً از حساب کاربری خود خارج و دوباره وارد شوید تا امکانات مربیان فعال شود.'
+          : status === 'rejected'
+          ? 'متأسفانه درخواست شما رد شده است. برای اطلاعات بیشتر با مدیر تماس بگیرید.'
+          : 'درخواست شما در حال بررسی توسط مدیر است. پس از تأیید، امکانات مربیان برای شما فعال خواهد شد.'
+        }
+      </p>
+    </div>
+  )
+}
+
 export default function CoachDashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const isCoach = user?.role === 'coach' || user?.role === 'owner'
   const [tab, setTab] = useState('posts')
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
@@ -17,11 +59,18 @@ export default function CoachDashboard() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [application, setApplication] = useState(undefined)
 
   useEffect(() => {
-    if (!user) return
-    if (user.role !== 'coach' && user.role !== 'owner') navigate('/fa/articles')
+    if (!user) navigate('/fa/articles')
   }, [user, navigate])
+
+  useEffect(() => {
+    if (!user || isCoach) return
+    client.get('/coaches/my-application/')
+      .then(({ data }) => setApplication(data))
+      .catch(() => setApplication(null))
+  }, [user, isCoach])
 
   const loadPosts = useCallback(() => {
     setLoading(true)
@@ -30,7 +79,10 @@ export default function CoachDashboard() {
       .finally(() => setLoading(false))
   }, [])
 
-  useEffect(() => { loadPosts() }, [loadPosts])
+  useEffect(() => {
+    if (!user || !isCoach) return
+    loadPosts()
+  }, [user, isCoach, loadPosts])
 
   function openCreate() {
     setEditing(null); setForm(emptyForm); setError(''); setShowModal(true)
@@ -78,7 +130,55 @@ export default function CoachDashboard() {
   const totalViews     = publishedPosts.reduce((s, p) => s + p.view_count, 0)
   const maxViews       = Math.max(...publishedPosts.map((p) => p.view_count), 1)
 
-  if (!user || (user.role !== 'coach' && user.role !== 'owner')) return null
+  if (!user) return null
+
+  if (!isCoach) {
+    return (
+      <div style={{ marginTop: 'var(--navbar-h)' }}>
+        <div style={{ background: 'var(--clr-navy)', color: '#fff', padding: '2rem 0' }}>
+          <div className="container" dir="rtl">
+            <h2 style={{ color: '#fff', margin: '0 0 .2rem', fontWeight: 800 }}>داشبورد</h2>
+            <p style={{ color: 'rgba(255,255,255,.5)', margin: 0, fontSize: '.88rem' }}>
+              وضعیت حساب کاربری شما
+            </p>
+          </div>
+        </div>
+
+        <div className="container py-5" dir="rtl">
+          <div className="mx-auto" style={{ maxWidth: 500 }}>
+            {application === undefined ? (
+              <div className="sp-loading"><div className="sp-spinner" /></div>
+            ) : application ? (
+              <ApplicationStatusCard application={application} />
+            ) : (
+              <div className="sp-card p-5 text-center">
+                <div
+                  className="mx-auto mb-4 d-flex align-items-center justify-content-center"
+                  style={{
+                    width: 80, height: 80, borderRadius: '50%',
+                    background: 'var(--clr-accent-light)', color: 'var(--clr-accent)', fontSize: '2.2rem',
+                  }}
+                >
+                  <i className="bi bi-person-badge" />
+                </div>
+                <h5 className="fw-bold mb-2">هنوز مربی نیستید</h5>
+                <p style={{ color: 'var(--clr-text-2)', fontSize: '.9rem', maxWidth: 360, margin: '0 auto 1.5rem' }}>
+                  برای انتشار مقاله و دسترسی به امکانات مربیان، ابتدا درخواست مربیگری خود را برای مدیر ارسال کنید.
+                </p>
+                <Link
+                  to="/coach-application"
+                  className="btn btn-primary"
+                  style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
+                >
+                  <i className="bi bi-send me-2" />ارسال درخواست مربیگری
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div style={{ marginTop: 'var(--navbar-h)' }}>

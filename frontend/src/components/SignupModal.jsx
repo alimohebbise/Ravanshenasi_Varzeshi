@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function SignupModal({ onClose, onSwitchToLogin }) {
   const { register } = useAuth()
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     username: '',
     phone_number: '',
@@ -29,6 +31,7 @@ export default function SignupModal({ onClose, onSwitchToLogin }) {
     try {
       await register(form)
       onClose()
+      navigate('/coach-dashboard')
     } catch (err) {
       const data = err.response?.data
       if (data) {

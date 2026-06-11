@@ -53,19 +53,11 @@ export default function Navbar() {
           مربیان
         </Link>
       </li>
-      {user && user.role === 'athlete' && (
-        <li>
-          <Link className="sp-nav-link accent" to="/coach-application" onClick={onClose}>
-            <i className="bi bi-person-plus" />
-            ثبت نام مربی
-          </Link>
-        </li>
-      )}
-      {(user?.role === 'coach' || user?.role === 'owner') && (
+      {user && (
         <li>
           <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
             <i className="bi bi-pencil-square" />
-            داشبورد مربی
+            {user.role === 'coach' || user.role === 'owner' ? 'داشبورد مربی' : 'داشبورد'}
           </Link>
         </li>
       )}
