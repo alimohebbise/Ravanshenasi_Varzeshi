@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { ARTICLES, CATEGORIES } from '../data/articles'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
+import { PostCard, PostModal } from '../components/PostCard'
 
 const CAT_ICON = {
   psychology:   'bi-brain',
@@ -19,6 +20,8 @@ export default function ArticleList() {
 
   const [viewCounts, setViewCounts] = useState({})
   const [activeCategory, setActiveCategory] = useState('all')
+  const [posts, setPosts] = useState([])
+  const [activePost, setActivePost] = useState(null)
 
   useEffect(() => {
     client.get(`/articles/?lang=${lang}`)
@@ -29,6 +32,12 @@ export default function ArticleList() {
       })
       .catch(() => {})
   }, [lang])
+
+  useEffect(() => {
+    client.get('/posts/')
+      .then(({ data }) => setPosts(data))
+      .catch(() => {})
+  }, [])
 
   const articles = ARTICLES[lang] || []
   const filtered = activeCategory === 'all'
@@ -168,6 +177,22 @@ export default function ArticleList() {
           </div>
         )}
       </div>
+
+      {/* ── Coach posts ── */}
+      {posts.length > 0 && (
+        <div className="container py-4" dir="rtl">
+          <h5 className="sp-section-title">
+            {isRtl ? 'آخرین پست‌های مربیان' : 'Latest Coach Posts'}
+          </h5>
+          <div className="row g-3">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} onClick={() => setActivePost(post)} showCoach />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <PostModal post={activePost} onClose={() => setActivePost(null)} />
     </div>
   )
 }
