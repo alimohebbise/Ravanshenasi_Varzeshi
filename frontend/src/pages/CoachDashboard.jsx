@@ -3,8 +3,9 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
 import RichTextEditor from '../components/RichTextEditor'
+import TagInput from '../components/TagInput'
 
-const emptyForm = { title: '', content: '', status: 'draft', cover_image: null }
+const emptyForm = { title: '', content: '', status: 'draft', cover_image: null, tags: [] }
 
 export default function CoachDashboard() {
   const { user } = useAuth()
@@ -17,6 +18,8 @@ export default function CoachDashboard() {
   const [form, setForm] = useState(emptyForm)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [tagSuggestions, setTagSuggestions] = useState([])
+  const [activeTag, setActiveTag] = useState(null)
 
   useEffect(() => {
     if (!user) { navigate('/fa/articles'); return }
@@ -33,6 +36,9 @@ export default function CoachDashboard() {
   useEffect(() => {
     if (!user || !isCoach) return
     loadPosts()
+    client.get('/posts/tags/')
+      .then(({ data }) => setTagSuggestions(data.map((t) => t.name)))
+      .catch(() => {})
   }, [user, isCoach, loadPosts])
 
   function openCreate() {
@@ -41,7 +47,13 @@ export default function CoachDashboard() {
 
   function openEdit(post) {
     setEditing(post)
-    setForm({ title: post.title, content: post.content, status: post.status, cover_image: null })
+    setForm({
+      title: post.title,
+      content: post.content,
+      status: post.status,
+      cover_image: null,
+      tags: post.tags.map((t) => t.name),
+    })
     setError(''); setShowModal(true)
   }
 
@@ -59,12 +71,20 @@ export default function CoachDashboard() {
       fd.append('content', form.content)
       fd.append('status', form.status)
       if (form.cover_image) fd.append('cover_image', form.cover_image)
+      if (form.tags.length === 0) {
+        fd.append('tag_names', '')
+      } else {
+        form.tags.forEach((t) => fd.append('tag_names', t))
+      }
       if (editing) {
         await client.patch(`/posts/${editing.id}/`, fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       } else {
         await client.post('/posts/create/', fd, { headers: { 'Content-Type': 'multipart/form-data' } })
       }
       setShowModal(false); loadPosts()
+      client.get('/posts/tags/')
+        .then(({ data }) => setTagSuggestions(data.map((t) => t.name)))
+        .catch(() => {})
     } catch (err) {
       setError(err.response?.data?.detail || JSON.stringify(err.response?.data) || 'خطا رخ داد')
     } finally { setSaving(false) }
@@ -79,6 +99,19 @@ export default function CoachDashboard() {
   const publishedPosts = posts.filter((p) => p.status === 'published')
   const draftPosts     = posts.filter((p) => p.status === 'draft')
   const totalViews     = publishedPosts.reduce((s, p) => s + p.view_count, 0)
+
+  const tagCounts = {}
+  posts.forEach((post) => {
+    post.tags.forEach((t) => { tagCounts[t.name] = (tagCounts[t.name] || 0) + 1 })
+  })
+  const topTags = Object.entries(tagCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10)
+    .map(([name]) => name)
+
+  const displayedPosts = activeTag
+    ? posts.filter((post) => post.tags.some((t) => t.name === activeTag))
+    : posts
 
   if (!user || !isCoach) return null
 
@@ -146,6 +179,27 @@ export default function CoachDashboard() {
           </div>
         </div>
 
+        {/* Tag filter */}
+        {!loading && topTags.length > 0 && (
+          <div className="d-flex flex-wrap gap-2 mb-3">
+            <button
+              className={`sp-filter-pill ${activeTag === null ? 'active' : ''}`}
+              onClick={() => setActiveTag(null)}
+            >
+              همه
+            </button>
+            {topTags.map((tag) => (
+              <button
+                key={tag}
+                className={`sp-filter-pill ${activeTag === tag ? 'active' : ''}`}
+                onClick={() => setActiveTag(tag)}
+              >
+                <i className="bi bi-tag me-1" />{tag}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Posts */}
         {(
           loading ? (
@@ -155,6 +209,11 @@ export default function CoachDashboard() {
               <div className="sp-empty-icon"><i className="bi bi-journal-plus" /></div>
               <p>هنوز پستی ندارید.</p>
               <button className="btn btn-primary" onClick={openCreate}>اولین پست را بنویسید</button>
+            </div>
+          ) : displayedPosts.length === 0 ? (
+            <div className="sp-empty">
+              <div className="sp-empty-icon"><i className="bi bi-tag" /></div>
+              <p>پستی با این برچسب یافت نشد.</p>
             </div>
           ) : (
             <div className="sp-table">
@@ -169,9 +228,20 @@ export default function CoachDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {posts.map((post) => (
+                  {displayedPosts.map((post) => (
                     <tr key={post.id}>
-                      <td style={{ fontWeight: 600 }}>{post.title}</td>
+                      <td style={{ fontWeight: 600 }}>
+                        {post.title}
+                        {post.tags.length > 0 && (
+                          <div className="d-flex flex-wrap gap-1 mt-1">
+                            {post.tags.map((t) => (
+                              <span key={t.id} className="tag-badge">
+                                <i className="bi bi-tag" />{t.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </td>
                       <td>
                         <span className={`sp-status ${post.status}`}>
                           {post.status === 'published' ? 'منتشر شده' : 'پیش‌نویس'}
@@ -251,6 +321,14 @@ export default function CoachDashboard() {
                   value={form.content}
                   onChange={(html) => setForm((f) => ({ ...f, content: html }))}
                   placeholder="محتوای پست خود را بنویسید..."
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">برچسب‌ها</label>
+                <TagInput
+                  value={form.tags}
+                  onChange={(tags) => setForm((f) => ({ ...f, tags }))}
+                  suggestions={tagSuggestions}
                 />
               </div>
               <div className="row g-3 mb-4">

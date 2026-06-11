@@ -8,8 +8,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
-from .models import Post
-from .serializers import PostSerializer
+from .models import Post, Tag
+from .serializers import PostSerializer, TagSerializer
 from .permissions import IsCoach, IsPostOwner
 
 ALLOWED_CONTENT_IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg"}
@@ -36,9 +36,21 @@ class MyPostListView(generics.ListAPIView):
     permission_classes = [IsCoach]
 
     def get_queryset(self):
-        return Post.objects.filter(coach=self.request.user).select_related(
+        qs = Post.objects.filter(coach=self.request.user).select_related(
             "coach", "coach__coach_application"
-        )
+        ).prefetch_related("tags")
+        tag = self.request.query_params.get("tag")
+        if tag:
+            qs = qs.filter(tags__name=tag)
+        return qs
+
+
+class TagListView(generics.ListAPIView):
+    """All existing tags, for the tag picker's autocomplete suggestions."""
+    serializer_class = TagSerializer
+    permission_classes = [IsCoach]
+    queryset = Tag.objects.all()
+    pagination_class = None
 
 
 class PostCreateView(generics.CreateAPIView):
