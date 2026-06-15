@@ -42,3 +42,69 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.coach.username})"
+
+
+class PostLike(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="likes")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_likes"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("post", "user")
+
+    def __str__(self):
+        return f"{self.user.username} likes {self.post_id}"
+
+
+class PostComment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_comments"
+    )
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} on {self.post_id}"
+
+
+class SaveCategory(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="save_categories"
+    )
+    name = models.CharField(max_length=50)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "name")
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name} ({self.user.username})"
+
+
+class SavedPost(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="saved_posts"
+    )
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="saves")
+    category = models.ForeignKey(
+        SaveCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="saved_posts",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "post")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user.username} saved {self.post_id}"

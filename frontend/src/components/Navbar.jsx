@@ -1,14 +1,13 @@
 import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import LoginModal from './LoginModal'
-import SignupModal from './SignupModal'
+import { useAuthModal } from '../context/AuthModalContext'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
+  const { openAuthModal } = useAuthModal()
   const navigate = useNavigate()
   const { lang = 'fa' } = useParams()
-  const [modal, setModal] = useState(null)   // 'login' | 'signup' | null
   const [mobileOpen, setMobileOpen] = useState(false)
 
   function handleLogout() {
@@ -48,11 +47,25 @@ export default function Navbar() {
         </Link>
       </li>
       <li>
+        <Link className="sp-nav-link" to="/posts" onClick={onClose}>
+          <i className="bi bi-grid-3x3-gap" />
+          پست‌ها
+        </Link>
+      </li>
+      <li>
         <Link className="sp-nav-link" to="/coaches" onClick={onClose}>
           <i className="bi bi-people" />
           مربیان
         </Link>
       </li>
+      {user && (
+        <li>
+          <Link className="sp-nav-link accent" to="/saved" onClick={onClose}>
+            <i className="bi bi-bookmark" />
+            ذخیره‌شده‌ها
+          </Link>
+        </li>
+      )}
       {user && user.role === 'coach' && (
         <>
           <li>
@@ -64,7 +77,7 @@ export default function Navbar() {
           <li>
             <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
               <i className="bi bi-pencil-square" />
-              پست‌ها
+              مدیریت پست‌ها
             </Link>
           </li>
           <li>
@@ -137,10 +150,10 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <button className="btn-nav-login" onClick={() => setModal('login')}>
+                <button className="btn-nav-login" onClick={() => openAuthModal('login')}>
                   ورود
                 </button>
-                <button className="btn-nav-signup" onClick={() => setModal('signup')}>
+                <button className="btn-nav-signup" onClick={() => openAuthModal('signup')}>
                   ثبت نام
                 </button>
               </>
@@ -184,13 +197,13 @@ export default function Navbar() {
             <>
               <button
                 className="btn-nav-login w-100 text-center"
-                onClick={() => { setMobileOpen(false); setModal('login') }}
+                onClick={() => { setMobileOpen(false); openAuthModal('login') }}
               >
                 ورود
               </button>
               <button
                 className="btn-nav-signup w-100 text-center"
-                onClick={() => { setMobileOpen(false); setModal('signup') }}
+                onClick={() => { setMobileOpen(false); openAuthModal('signup') }}
               >
                 ثبت نام
               </button>
@@ -198,19 +211,6 @@ export default function Navbar() {
           )}
         </div>
       </div>
-
-      {modal === 'login' && (
-        <LoginModal
-          onClose={() => setModal(null)}
-          onSwitchToSignup={() => setModal('signup')}
-        />
-      )}
-      {modal === 'signup' && (
-        <SignupModal
-          onClose={() => setModal(null)}
-          onSwitchToLogin={() => setModal('login')}
-        />
-      )}
     </>
   )
 }

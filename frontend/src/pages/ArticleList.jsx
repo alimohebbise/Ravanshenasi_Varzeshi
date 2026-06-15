@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useAuthModal } from '../context/AuthModalContext'
 import client from '../api/client'
-import { PostCard, PostModal } from '../components/PostCard'
 
 export default function ArticleList() {
   const { lang = 'fa' } = useParams()
   const { user } = useAuth()
+  const { openAuthModal } = useAuthModal()
   const isRtl = lang === 'fa'
 
   const [posts, setPosts] = useState([])
-  const [activePost, setActivePost] = useState(null)
 
   useEffect(() => {
     client.get('/posts/')
@@ -49,7 +49,7 @@ export default function ArticleList() {
               <button
                 className="btn btn-primary px-4 py-2"
                 style={{ borderRadius: 'var(--radius-md)', fontWeight: 700 }}
-                onClick={() => document.querySelector('.btn-nav-signup')?.click()}
+                onClick={() => openAuthModal('signup')}
               >
                 <i className="bi bi-person-plus me-2" />
                 {isRtl ? 'ثبت نام' : 'Sign Up'}
@@ -57,7 +57,7 @@ export default function ArticleList() {
               <button
                 className="btn btn-nav-login px-4 py-2"
                 style={{ borderRadius: 'var(--radius-md)' }}
-                onClick={() => document.querySelector('.btn-nav-login')?.click()}
+                onClick={() => openAuthModal('login')}
               >
                 <i className="bi bi-box-arrow-in-right me-2" />
                 {isRtl ? 'ورود' : 'Login'}
@@ -83,22 +83,6 @@ export default function ArticleList() {
           </div>
         </div>
       </section>
-
-      {/* ── Coach posts ── */}
-      {posts.length > 0 && (
-        <div className="container py-4" dir="rtl">
-          <h5 className="sp-section-title">
-            {isRtl ? 'آخرین پست‌های مربیان' : 'Latest Coach Posts'}
-          </h5>
-          <div className="row g-3">
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} onClick={() => setActivePost(post)} showCoach />
-            ))}
-          </div>
-        </div>
-      )}
-
-      <PostModal post={activePost} onClose={() => setActivePost(null)} />
     </div>
   )
 }

@@ -1012,6 +1012,12 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1.5rem;
 }
 
+.sp-coach-avatar.sm {
+  width: 38px;
+  height: 38px;
+  font-size: .85rem;
+}
+
 .sp-post-card {
   background: var(--clr-surface);
   border-radius: var(--radius-lg);
@@ -1462,6 +1468,281 @@ h1, h2, h3, h4, h5, h6 {
 .sp-rich-content ul,
 .sp-rich-content ol { margin: 0 0 .9rem; padding-inline-start: 1.5rem; }
 .sp-rich-content a { color: var(--clr-accent); text-decoration: underline; }
+
+/* ============================================================
+   INSTAGRAM-STYLE POST FEED
+   ============================================================ */
+.sp-insta-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.sp-insta-card {
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.sp-insta-header {
+  padding: .75rem 1rem;
+}
+
+.sp-insta-coach {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.sp-insta-coach-name {
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--clr-text);
+}
+
+.sp-insta-date {
+  font-size: .75rem;
+  color: var(--clr-text-muted);
+}
+
+.sp-insta-image {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+  cursor: pointer;
+}
+
+.sp-insta-image.sp-post-card-placeholder {
+  height: 280px;
+  cursor: pointer;
+}
+
+.sp-insta-actions {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .6rem .85rem;
+  border-top: 1px solid var(--clr-border);
+}
+
+.sp-insta-action {
+  background: none;
+  border: none;
+  font-size: 1.35rem;
+  color: var(--clr-text-2);
+  cursor: pointer;
+  padding: .25rem;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition), transform var(--transition);
+}
+
+.sp-insta-action:hover { color: var(--clr-text); transform: scale(1.08); }
+
+.sp-insta-action.liked { color: var(--clr-danger); }
+.sp-insta-action.saved { color: var(--clr-accent); }
+
+.sp-insta-actions .sp-insta-action:last-child { margin-inline-start: auto; }
+
+.sp-insta-body {
+  padding: 0 1rem 1rem;
+}
+
+.sp-insta-like-count {
+  font-weight: 700;
+  font-size: .85rem;
+  margin-bottom: .35rem;
+}
+
+.sp-insta-caption {
+  font-size: .88rem;
+  line-height: 1.8;
+  color: var(--clr-text-2);
+  overflow-wrap: break-word;
+}
+
+.sp-insta-caption strong { color: var(--clr-text); }
+
+.sp-insta-more {
+  background: none;
+  border: none;
+  color: var(--clr-text-muted);
+  font-size: .85rem;
+  cursor: pointer;
+  padding: 0;
+  margin-inline-start: .35rem;
+}
+
+.sp-insta-comment-toggle {
+  display: block;
+  background: none;
+  border: none;
+  color: var(--clr-text-muted);
+  font-size: .82rem;
+  padding: .5rem 0 0;
+  cursor: pointer;
+}
+
+/* Comments */
+.sp-comments {
+  border-top: 1px solid var(--clr-border);
+  padding: .85rem 1rem;
+}
+
+.sp-comments-empty {
+  color: var(--clr-text-muted);
+  font-size: .82rem;
+  margin-bottom: .75rem;
+}
+
+.sp-comments-list {
+  list-style: none;
+  margin: 0 0 .75rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.sp-comment-row {
+  font-size: .85rem;
+  line-height: 1.7;
+}
+
+.sp-comment-user {
+  font-weight: 700;
+  margin-inline-end: .4rem;
+}
+
+.sp-comment-text {
+  color: var(--clr-text-2);
+}
+
+.sp-comment-form {
+  display: flex;
+  gap: .5rem;
+}
+
+.sp-comment-form input {
+  flex: 1;
+}
+
+.sp-comment-form button {
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  flex-shrink: 0;
+}
+
+/* Save-to-category modal */
+.sp-save-categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  margin-bottom: 1rem;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.sp-save-category-item {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .6rem .85rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--clr-border);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.sp-save-category-item:hover {
+  border-color: var(--clr-accent);
+  background: var(--clr-accent-light);
+}
+
+.sp-save-category-item.active {
+  border-color: var(--clr-accent);
+  background: var(--clr-accent-light);
+  color: var(--clr-accent);
+}
+
+.sp-save-category-count {
+  margin-inline-start: auto;
+  color: var(--clr-text-muted);
+  font-size: .78rem;
+  font-weight: 400;
+}
+
+.sp-save-new-category {
+  display: flex;
+  gap: .5rem;
+}
+
+.sp-save-new-category input { flex: 1; }
+
+.sp-save-new-category button {
+  border-radius: var(--radius-md);
+  width: 42px;
+  flex-shrink: 0;
+}
+
+.sp-save-hint {
+  margin: .85rem 0 0;
+  font-size: .78rem;
+  color: var(--clr-text-muted);
+  text-align: center;
+}
+
+/* Locked teaser for anonymous visitors */
+.sp-insta-locked {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sp-insta-locked-preview {
+  filter: blur(6px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.sp-insta-locked-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: .75rem;
+  padding: 1.5rem;
+  background: rgba(13, 33, 55, .55);
+  color: #fff;
+  border-radius: var(--radius-lg);
+}
+
+.sp-insta-locked-overlay i {
+  font-size: 2.25rem;
+}
+
+.sp-insta-locked-overlay p {
+  max-width: 320px;
+  margin: 0;
+  font-size: .9rem;
+}
 
 /* ============================================================
    RESPONSIVE UTILITIES
