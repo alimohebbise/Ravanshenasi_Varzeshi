@@ -16,9 +16,9 @@ export default function App() {
     <>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Navigate to="/fa/articles" replace />} />
-        <Route path="/:lang/articles" element={<ArticleList />} />
-        <Route path="/:lang/articles/:slug" element={<ArticleDetail />} />
+        <Route path="/" element={<Navigate to="/articles" replace />} />
+        <Route path="/articles" element={<ArticleList />} />
+        <Route path="/articles/:slug" element={<ArticleDetail />} />
         <Route path="/coach-application" element={<CoachApplication />} />
         <Route path="/admin-panel" element={<AdminPanel />} />
         <Route path="/coach-dashboard" element={<CoachDashboard />} />
@@ -27,7 +27,7 @@ export default function App() {
         <Route path="/coaches/:coachId" element={<CoachPage />} />
         <Route path="/posts" element={<PostFeed />} />
         <Route path="/saved" element={<SavedPosts />} />
-        <Route path="*" element={<Navigate to="/fa/articles" replace />} />
+        <Route path="*" element={<Navigate to="/articles" replace />} />
       </Routes>
     </>
   )

@@ -28,8 +28,8 @@ export default function AdminPanel() {
         .then(({ data }) => setApplications(data))
         .finally(() => setLoading(false))
     } else if (tab === 'articles') {
-      Promise.all([client.get('/articles/?lang=fa'), client.get('/articles/?lang=en')])
-        .then(([fa, en]) => setArticles([...fa.data, ...en.data].sort((a, b) => b.view_count - a.view_count)))
+      client.get('/articles/?lang=fa')
+        .then(({ data }) => setArticles([...data].sort((a, b) => b.view_count - a.view_count)))
         .finally(() => setLoading(false))
     } else if (tab === 'posts') {
       client.get('/posts/')
@@ -256,16 +256,14 @@ export default function AdminPanel() {
                 <thead>
                   <tr>
                     <th>عنوان</th>
-                    <th>زبان</th>
                     <th>دسته‌بندی</th>
                     <th>بازدید</th>
                   </tr>
                 </thead>
                 <tbody>
                   {articles.map((a) => (
-                    <tr key={`${a.slug}-${a.language}`}>
+                    <tr key={a.slug}>
                       <td style={{ fontWeight: 600 }}>{a.title}</td>
-                      <td style={{ color: 'var(--clr-text-2)' }}>{a.language === 'fa' ? 'فارسی' : 'English'}</td>
                       <td style={{ color: 'var(--clr-text-2)' }}>{a.category}</td>
                       <td>
                         <span className="sp-view-count">

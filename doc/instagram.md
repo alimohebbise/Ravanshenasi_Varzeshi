@@ -4,4 +4,6 @@ I want to have a page like instagram that end-users will see the coaches posts a
 - in hope page should not post be shonen
 - in the header link of the post page must be visible
 - for clients that haven't registered or signed in system only hsow 3 post and then will ask them in a popup to sign in 
+- coaches should be abale to see their posts, comments and likes
 - 
+drag ain tin the 

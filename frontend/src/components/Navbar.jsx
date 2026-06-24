@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
 
@@ -7,13 +7,12 @@ export default function Navbar() {
   const { user, logout } = useAuth()
   const { openAuthModal } = useAuthModal()
   const navigate = useNavigate()
-  const { lang = 'fa' } = useParams()
   const [mobileOpen, setMobileOpen] = useState(false)
 
   function handleLogout() {
     logout()
     setMobileOpen(false)
-    navigate(`/${lang}/articles`)
+    navigate('/articles')
   }
 
   function initials() {
@@ -35,15 +34,9 @@ export default function Navbar() {
   const NavLinks = ({ mobile = false, onClose = () => {} }) => (
     <>
       <li>
-        <Link className="sp-nav-link" to="/fa/articles" onClick={onClose}>
+        <Link className="sp-nav-link" to="/articles" onClick={onClose}>
           <i className="bi bi-newspaper" />
-          فارسی
-        </Link>
-      </li>
-      <li>
-        <Link className="sp-nav-link" to="/en/articles" onClick={onClose}>
-          <i className="bi bi-translate" />
-          English
+          مقالات
         </Link>
       </li>
       <li>
@@ -119,7 +112,7 @@ export default function Navbar() {
     <>
       <nav className="sp-navbar" dir="rtl">
         <div className="container">
-          <Link className="sp-brand" to="/fa/articles">
+          <Link className="sp-brand" to="/articles">
             <div className="sp-brand-icon">
               <i className="bi bi-brain" />
             </div>

@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
 import client from '../api/client'
 
 export default function ArticleList() {
-  const { lang = 'fa' } = useParams()
   const { user } = useAuth()
   const { openAuthModal } = useAuthModal()
-  const isRtl = lang === 'fa'
 
   const [posts, setPosts] = useState([])
 
@@ -23,25 +20,19 @@ export default function ArticleList() {
   const coachCount = new Set(posts.map((p) => p.coach_id)).size
 
   return (
-    <div dir={isRtl ? 'rtl' : 'ltr'}>
+    <div dir="rtl">
       {/* ── Hero ── */}
       <section className="sp-hero">
         <div className="container sp-hero-content">
           <div className="sp-hero-eyebrow">
             <i className="bi bi-award-fill" />
-            {isRtl ? 'متخصص روانشناسی ورزشی ما' : 'Our Sports Psychologist'}
+            متخصص روانشناسی ورزشی ما
           </div>
           <h1>
-            {isRtl
-              ? <><span>روانشناسی</span> ورزشی</>
-              : <>Sports <span>Psychology</span></>
-            }
+            <span>روانشناسی</span> ورزشی
           </h1>
           <p className="sp-hero-sub">
-            {isRtl
-              ? 'مجموعه‌ای جامع از مقالات علمی در حوزه روانشناسی و فیزیولوژی ورزش، مربیگری و هنرهای رزمی'
-              : 'A comprehensive collection of scientific articles on sport psychology, physiology, coaching, and martial arts'
-            }
+            مجموعه‌ای جامع از مقالات علمی در حوزه روانشناسی و فیزیولوژی ورزش، مربیگری و هنرهای رزمی
           </p>
 
           {!user && (
@@ -52,7 +43,7 @@ export default function ArticleList() {
                 onClick={() => openAuthModal('signup')}
               >
                 <i className="bi bi-person-plus me-2" />
-                {isRtl ? 'ثبت نام' : 'Sign Up'}
+                ثبت نام
               </button>
               <button
                 className="btn btn-nav-login px-4 py-2"
@@ -60,7 +51,7 @@ export default function ArticleList() {
                 onClick={() => openAuthModal('login')}
               >
                 <i className="bi bi-box-arrow-in-right me-2" />
-                {isRtl ? 'ورود' : 'Login'}
+                ورود
               </button>
             </div>
           )}
@@ -68,17 +59,17 @@ export default function ArticleList() {
           <div className="sp-hero-stats">
             <div>
               <div className="sp-hero-stat-value">{totalPosts}</div>
-              <div className="sp-hero-stat-label">{isRtl ? 'پست' : 'Posts'}</div>
+              <div className="sp-hero-stat-label">پست</div>
             </div>
             <div>
               <div className="sp-hero-stat-value">{coachCount}</div>
-              <div className="sp-hero-stat-label">{isRtl ? 'مربی' : 'Coaches'}</div>
+              <div className="sp-hero-stat-label">مربی</div>
             </div>
             <div>
               <div className="sp-hero-stat-value">
-                {totalViews.toLocaleString(isRtl ? 'fa-IR' : 'en')}
+                {totalViews.toLocaleString('fa-IR')}
               </div>
-              <div className="sp-hero-stat-label">{isRtl ? 'کل بازدید' : 'Total Views'}</div>
+              <div className="sp-hero-stat-label">کل بازدید</div>
             </div>
           </div>
         </div>

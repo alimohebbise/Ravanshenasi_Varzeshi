@@ -1,8 +1,8 @@
 export const CATEGORIES = {
-  psychology: { fa: 'روانشناسی', en: 'Psychology', color: 'primary' },
-  physiology: { fa: 'فیزیولوژی', en: 'Physiology', color: 'success' },
-  sports: { fa: 'ورزش‌ها', en: 'Sports', color: 'warning' },
-  martial_arts: { fa: 'هنرهای رزمی', en: 'Martial Arts', color: 'danger' },
+  psychology: { fa: 'روانشناسی', color: 'primary' },
+  physiology: { fa: 'فیزیولوژی', color: 'success' },
+  sports: { fa: 'ورزش‌ها', color: 'warning' },
+  martial_arts: { fa: 'هنرهای رزمی', color: 'danger' },
 }
 
 // slug must match the actual HTML filename (without .html)
@@ -49,18 +49,5 @@ export const ARTICLES = {
     { slug: 'boxing', title: 'بوکس', category: 'martial_arts' },
     { slug: 'kickboxing', title: 'کیک بوکسینگ', category: 'martial_arts' },
     { slug: 'wrestling', title: 'کشتی', category: 'martial_arts' },
-  ],
-  en: [
-    { slug: 'Mental_Toughness', title: 'Mental Toughness', category: 'psychology' },
-    { slug: 'anxiety-sports', title: 'Anxiety in Sports', category: 'psychology' },
-    { slug: 'motivation', title: 'Motivation in Sports', category: 'psychology' },
-    { slug: 'excitement', title: 'Excitement in Sports', category: 'psychology' },
-    { slug: 'Self-esteem_in_sports', title: 'Self-Esteem in Sports', category: 'psychology' },
-    { slug: 'StressManagement', title: 'Stress Management', category: 'psychology' },
-    { slug: 'bodymuscles', title: 'Body Muscles', category: 'physiology' },
-    { slug: 'Focusonthemuscles', title: 'Focus on the Muscles', category: 'physiology' },
-    { slug: 'Stretchingmovements', title: 'Stretching Movements', category: 'physiology' },
-    { slug: 'Vitamin', title: 'Vitamins in Sports', category: 'physiology' },
-    { slug: 'tabiat', title: 'Sports in Nature', category: 'physiology' },
   ],
 }
