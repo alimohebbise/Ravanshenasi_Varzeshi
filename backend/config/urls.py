@@ -10,6 +10,7 @@ urlpatterns = [
     path("api/articles/", include("articles.urls")),
     path("api/coaches/", include("coaches.urls")),
     path("api/posts/", include("posts.urls")),
+    path("api/shop/", include("shop.urls")),
     path("api/appointments/", include("appointments.urls")),
     # Serve existing HTML article files for iframe embedding
     re_path(r'^(?P<path>.*\.html)$', serve_html),

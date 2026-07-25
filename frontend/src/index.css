@@ -1062,6 +1062,36 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
 }
 
+.sp-price {
+  font-weight: 800;
+  color: var(--clr-accent);
+  font-size: 1.05rem;
+}
+
+.cart-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.cart-badge .cart-badge-count {
+  position: absolute;
+  top: -6px;
+  left: -8px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--clr-danger);
+  color: #fff;
+  font-size: .68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 /* ============================================================
    PAGE HEADERS
    ============================================================ */
@@ -1153,6 +1183,24 @@ h1, h2, h3, h4, h5, h6 {
 .sp-status.published::before { background: var(--clr-success); }
 .sp-status.draft    { background: var(--clr-surface-2); color: var(--clr-text-muted); }
 .sp-status.draft::before    { background: var(--clr-text-muted); }
+.sp-status.pending_payment { background: var(--clr-warning-light); color: var(--clr-warning); }
+.sp-status.pending_payment::before { background: var(--clr-warning); }
+.sp-status.paid      { background: var(--clr-success-light); color: var(--clr-success); }
+.sp-status.paid::before      { background: var(--clr-success); }
+.sp-status.payment_failed { background: var(--clr-danger-light); color: var(--clr-danger); }
+.sp-status.payment_failed::before { background: var(--clr-danger); }
+.sp-status.processing { background: var(--clr-teal-light); color: var(--clr-teal); }
+.sp-status.processing::before { background: var(--clr-teal); }
+.sp-status.shipped   { background: var(--clr-accent-light); color: var(--clr-accent); }
+.sp-status.shipped::before   { background: var(--clr-accent); }
+.sp-status.delivered { background: var(--clr-success-light); color: var(--clr-success); }
+.sp-status.delivered::before { background: var(--clr-success); }
+.sp-status.cancelled,
+.sp-status.not_applicable { background: var(--clr-surface-2); color: var(--clr-text-muted); }
+.sp-status.cancelled::before,
+.sp-status.not_applicable::before { background: var(--clr-text-muted); }
+.sp-status.out-of-stock { background: var(--clr-danger-light); color: var(--clr-danger); }
+.sp-status.out-of-stock::before { background: var(--clr-danger); }
 
 /* ============================================================
    TABS (nav-tabs override)

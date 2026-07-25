@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
+import { useCart } from '../context/CartContext'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
   const { openAuthModal } = useAuthModal()
+  const { itemCount } = useCart()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -51,11 +53,32 @@ export default function Navbar() {
           مربیان
         </Link>
       </li>
+      <li>
+        <Link className="sp-nav-link" to="/shop" onClick={onClose}>
+          <i className="bi bi-shop" />
+          فروشگاه
+        </Link>
+      </li>
+      <li>
+        <Link className="sp-nav-link cart-badge" to="/cart" onClick={onClose}>
+          <i className="bi bi-cart3" />
+          سبد خرید
+          {itemCount > 0 && <span className="cart-badge-count">{itemCount}</span>}
+        </Link>
+      </li>
       {user && (
         <li>
           <Link className="sp-nav-link accent" to="/saved" onClick={onClose}>
             <i className="bi bi-bookmark" />
             ذخیره‌شده‌ها
+          </Link>
+        </li>
+      )}
+      {user && (
+        <li>
+          <Link className="sp-nav-link accent" to="/orders" onClick={onClose}>
+            <i className="bi bi-receipt" />
+            سفارش‌های من
           </Link>
         </li>
       )}
@@ -71,6 +94,18 @@ export default function Navbar() {
             <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
               <i className="bi bi-pencil-square" />
               مدیریت پست‌ها
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link accent" to="/coach-products" onClick={onClose}>
+              <i className="bi bi-bag" />
+              مدیریت محصولات
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link accent" to="/coach-sales" onClick={onClose}>
+              <i className="bi bi-truck" />
+              فروش‌ها
             </Link>
           </li>
           <li>
@@ -90,12 +125,26 @@ export default function Navbar() {
         </li>
       )}
       {user && user.role === 'owner' && (
-        <li>
-          <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
-            <i className="bi bi-pencil-square" />
-            داشبورد مربی
-          </Link>
-        </li>
+        <>
+          <li>
+            <Link className="sp-nav-link accent" to="/coach-dashboard" onClick={onClose}>
+              <i className="bi bi-pencil-square" />
+              داشبورد مربی
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link accent" to="/coach-products" onClick={onClose}>
+              <i className="bi bi-bag" />
+              مدیریت محصولات
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link accent" to="/coach-sales" onClick={onClose}>
+              <i className="bi bi-truck" />
+              فروش‌ها
+            </Link>
+          </li>
+        </>
       )}
       {user?.role === 'owner' && (
         <li>
