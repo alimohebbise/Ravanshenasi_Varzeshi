@@ -1706,44 +1706,6 @@ h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
-/* Locked teaser for anonymous visitors */
-.sp-insta-locked {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.sp-insta-locked-preview {
-  filter: blur(6px);
-  pointer-events: none;
-  user-select: none;
-}
-
-.sp-insta-locked-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: .75rem;
-  padding: 1.5rem;
-  background: rgba(13, 33, 55, .55);
-  color: #fff;
-  border-radius: var(--radius-lg);
-}
-
-.sp-insta-locked-overlay i {
-  font-size: 2.25rem;
-}
-
-.sp-insta-locked-overlay p {
-  max-width: 320px;
-  margin: 0;
-  font-size: .9rem;
-}
-
 /* ============================================================
    RESPONSIVE UTILITIES
    ============================================================ */
