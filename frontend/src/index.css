@@ -822,10 +822,10 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-xl);
   padding: 2.25rem 2rem;
   width: 100%;
-  max-width: 420px;
+  max-width: 80%;
   position: relative;
   box-shadow: var(--shadow-xl);
-  max-height: calc(100vh - 2rem);
+  max-height: calc(100vh - 6rem);
   overflow-y: auto;
 }
 
