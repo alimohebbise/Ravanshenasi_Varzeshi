@@ -280,6 +280,104 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ============================================================
+   NAV DROPDOWNS (desktop submenus + user menu)
+   ============================================================ */
+.sp-nav-dropdown {
+  position: relative;
+}
+
+.sp-nav-dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+.sp-nav-caret {
+  font-size: .6rem;
+  transition: transform var(--transition);
+}
+
+.sp-nav-caret.open { transform: rotate(180deg); }
+
+.sp-nav-dropdown-menu {
+  position: absolute;
+  top: calc(100% + .6rem);
+  inset-inline-start: 0;
+  min-width: 220px;
+  background: var(--clr-surface);
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: .4rem;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  gap: .1rem;
+}
+
+.sp-dropdown-link {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  padding: .55rem .7rem;
+  border-radius: var(--radius-sm);
+  color: var(--clr-text-2);
+  text-decoration: none;
+  font-size: .85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: right;
+  cursor: pointer;
+}
+
+.sp-dropdown-link:hover {
+  background: var(--clr-surface-2);
+  color: var(--clr-accent);
+}
+
+.sp-dropdown-link.danger { color: var(--clr-danger); }
+.sp-dropdown-link.danger:hover { background: var(--clr-danger-light); color: var(--clr-danger); }
+
+.sp-dropdown-divider {
+  margin: .35rem .2rem;
+  border: none;
+  border-top: 1px solid var(--clr-border);
+}
+
+.sp-user-menu-trigger {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: .3rem .5rem;
+  border-radius: var(--radius-md);
+  transition: background var(--transition);
+}
+
+.sp-user-menu-trigger:hover { background: rgba(255,255,255,.08); }
+
+.sp-nav-dropdown-menu.sp-user-menu-panel {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
+.sp-mobile-section-label {
+  padding: .6rem .75rem .3rem;
+  font-size: .72rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.4);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.sp-mobile-section-label:first-child { padding-top: 0; }
+
+/* ============================================================
    BUTTONS
    ============================================================ */
 .btn {
@@ -822,7 +920,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--radius-xl);
   padding: 2.25rem 2rem;
   width: 100%;
-  max-width: 80%;
+  max-width: 420px;
   position: relative;
   box-shadow: var(--shadow-xl);
   max-height: calc(100vh - 6rem);
