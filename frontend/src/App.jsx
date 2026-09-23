@@ -9,6 +9,7 @@ import CoachPage from './pages/CoachPage'
 import CoachesList from './pages/CoachesList'
 import MyProfile from './pages/MyProfile'
 import PostFeed from './pages/PostFeed'
+import PostDetail from './pages/PostDetail'
 import SavedPosts from './pages/SavedPosts'
 import Shop from './pages/Shop'
 import ProductDetail from './pages/ProductDetail'
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/coaches" element={<CoachesList />} />
         <Route path="/coaches/:coachId" element={<CoachPage />} />
         <Route path="/posts" element={<PostFeed />} />
+        <Route path="/posts/:id" element={<PostDetail />} />
         <Route path="/saved" element={<SavedPosts />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/:id" element={<ProductDetail />} />

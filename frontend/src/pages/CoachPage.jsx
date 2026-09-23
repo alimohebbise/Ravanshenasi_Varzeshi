@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import client from '../api/client'
-import { PostCard, PostModal } from '../components/PostCard'
+import { PostCard } from '../components/PostCard'
 
 export default function CoachPage() {
   const { coachId } = useParams()
+  const navigate = useNavigate()
   const [coach, setCoach] = useState(null)
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activePost, setActivePost] = useState(null)
 
   useEffect(() => {
     Promise.all([
@@ -102,13 +102,12 @@ export default function CoachPage() {
         ) : (
           <div className="row g-3">
             {posts.map((post) => (
-              <PostCard key={post.id} post={post} onClick={() => setActivePost(post)} />
+              <PostCard key={post.id} post={post} onClick={() => navigate(`/posts/${post.id}`)} />
             ))}
           </div>
         )}
       </div>
 
-      <PostModal post={activePost} onClose={() => setActivePost(null)} />
     </div>
   )
 }

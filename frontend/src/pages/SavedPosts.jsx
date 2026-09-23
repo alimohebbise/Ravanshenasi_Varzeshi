@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import client from '../api/client'
-import { PostCard, PostModal } from '../components/PostCard'
+import { PostCard } from '../components/PostCard'
 
 export default function SavedPosts() {
   const { user, loading: authLoading } = useAuth()
@@ -11,7 +11,6 @@ export default function SavedPosts() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [savedPosts, setSavedPosts] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activePost, setActivePost] = useState(null)
 
   useEffect(() => {
     if (authLoading) return
@@ -79,13 +78,12 @@ export default function SavedPosts() {
         ) : (
           <div className="row g-3">
             {savedPosts.map((sp) => (
-              <PostCard key={sp.id} post={sp.post} onClick={() => setActivePost(sp.post)} showCoach />
+              <PostCard key={sp.id} post={sp.post} onClick={() => navigate(`/posts/${sp.post.id}`)} showCoach />
             ))}
           </div>
         )}
       </div>
 
-      <PostModal post={activePost} onClose={() => setActivePost(null)} />
     </div>
   )
 }

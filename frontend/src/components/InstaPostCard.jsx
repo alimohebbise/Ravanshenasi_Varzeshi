@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import client from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import { useAuthModal } from '../context/AuthModalContext'
-import { getThumbnail, stripHtml, PostModal } from './PostCard'
+import { getThumbnail, stripHtml } from './PostCard'
 import CommentSection from './CommentSection'
 import SaveCategoryModal from './SaveCategoryModal'
 
@@ -15,6 +15,7 @@ function coachInitials(post) {
 }
 
 export default function InstaPostCard({ post }) {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const { openAuthModal } = useAuthModal()
 
@@ -26,7 +27,6 @@ export default function InstaPostCard({ post }) {
 
   const [showComments, setShowComments] = useState(false)
   const [showSaveModal, setShowSaveModal] = useState(false)
-  const [showFull, setShowFull] = useState(false)
 
   const thumb = getThumbnail(post)
   const caption = stripHtml(post.content)
@@ -61,6 +61,10 @@ export default function InstaPostCard({ post }) {
     setSavedCategoryId(result.category_id)
   }
 
+  function openPost() {
+    navigate(`/posts/${post.id}`)
+  }
+
   return (
     <article className="sp-insta-card">
       <div className="sp-insta-header">
@@ -74,9 +78,9 @@ export default function InstaPostCard({ post }) {
       </div>
 
       {thumb ? (
-        <img className="sp-insta-image" src={thumb} alt={post.title} onClick={() => setShowFull(true)} />
+        <img className="sp-insta-image" src={thumb} alt={post.title} onClick={openPost} />
       ) : (
-        <div className="sp-insta-image sp-post-card-placeholder" onClick={() => setShowFull(true)}>
+        <div className="sp-insta-image sp-post-card-placeholder" onClick={openPost}>
           <i className="bi bi-journal-richtext" />
         </div>
       )}
@@ -101,7 +105,7 @@ export default function InstaPostCard({ post }) {
           <strong>{post.title}</strong>
           {caption && <span> — {caption.length > 140 ? `${caption.slice(0, 140)}…` : caption}</span>}
           {caption.length > 140 && (
-            <button className="sp-insta-more" onClick={() => setShowFull(true)}>نمایش بیشتر</button>
+            <button className="sp-insta-more" onClick={openPost}>نمایش بیشتر</button>
           )}
         </div>
         {commentCount > 0 && (
@@ -114,8 +118,6 @@ export default function InstaPostCard({ post }) {
       {showComments && (
         <CommentSection postId={post.id} onCommentAdded={() => setCommentCount((c) => c + 1)} />
       )}
-
-      {showFull && <PostModal post={post} onClose={() => setShowFull(false)} />}
 
       {showSaveModal && (
         <SaveCategoryModal
