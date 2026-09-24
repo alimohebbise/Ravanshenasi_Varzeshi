@@ -31,15 +31,29 @@ export default function PostFeed() {
       </div>
 
       <div className="container py-4">
-        <div className="sp-insta-feed">
-          {posts.length === 0 ? (
-            <div className="sp-empty">
-              <div className="sp-empty-icon"><i className="bi bi-journal-x" /></div>
-              <p>هنوز پستی منتشر نشده است.</p>
-            </div>
-          ) : (
-            posts.map((post) => <InstaPostCard key={post.id} post={post} />)
-          )}
+        <div className="sp-posts-frame-shell">
+          <div className="sp-posts-frame-panel sp-posts-frame-panel-empty" aria-hidden="true" />
+
+          <div className="sp-posts-frame-panel sp-posts-frame-panel-titles">
+            {posts.length === 0 ? (
+              <div className="sp-empty">
+                <div className="sp-empty-icon"><i className="bi bi-journal-x" /></div>
+                <p>هنوز پستی منتشر نشده است.</p>
+              </div>
+            ) : (
+              <ul className="sp-posts-frame-list">
+                {posts.map((post) => (
+                  <li key={post.id} className="sp-posts-frame-item">
+                    <div className="sp-posts-frame-item-title">{post.title}</div>
+                    <span className="sp-posts-frame-item-meta">
+                      <i className="bi bi-eye me-1" />
+                      {Number(post.view_count || 0).toLocaleString('fa-IR')} بازدید
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </div>
       </div>
     </div>

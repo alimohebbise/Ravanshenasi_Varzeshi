@@ -37,15 +37,19 @@ export default function Navbar() {
   }
 
   const roleLabel = { owner: 'مدیر', coach: 'مربی', athlete: 'کاربر' }
+  const siteLogoUrl = 'https://gapgpt.app/api/v1/files/server/EgkXynh3ogK_AmB3XWO4DxwNKGo-T_-RVbX7RbioitVf5WwWmg.png'
 
   return (
     <>
       <nav className="sp-navbar" dir="rtl">
         <div className="container">
           <Link className="sp-brand" to="/articles">
-            <div className="sp-brand-icon">
-              <i className="bi bi-brain" />
-            </div>
+            <img
+              src={siteLogoUrl}
+              alt="لوگوی روانشناسی ورزشی"
+              className="sp-brand-icon"
+              style={{ objectFit: 'cover', width: 34, height: 34, borderRadius: 'var(--radius-md)' }}
+            />
             روانشناسی ورزشی
           </Link>
 

@@ -59,7 +59,13 @@ export function PostModal({ post, onClose }) {
           />
         )}
 
-        <h4 style={{ fontWeight: 800, marginBottom: '.75rem', overflowWrap: 'break-word' }}>{post.title}</h4>
+        <h4 style={{
+          fontWeight: 800,
+          marginBottom: '.75rem',
+          overflowWrap: 'normal',
+          wordBreak: 'keep-all',
+          unicodeBidi: 'plaintext',
+        }}>{post.title}</h4>
 
         <div className="d-flex gap-3 mb-3" style={{ color: 'var(--clr-text-muted)', fontSize: '.82rem' }}>
           {post.coach_name && (
@@ -113,7 +119,9 @@ export function PostCard({ post, onClick, showCoach = false }) {
           )}
           <h6 style={{
             fontWeight: 700, marginBottom: '.5rem', color: 'var(--clr-text)',
-            overflowWrap: 'break-word',
+            overflowWrap: 'normal',
+            wordBreak: 'keep-all',
+            unicodeBidi: 'plaintext',
           }}>
             {post.title}
           </h6>
@@ -121,7 +129,9 @@ export function PostCard({ post, onClick, showCoach = false }) {
             color: 'var(--clr-text-2)', fontSize: '.875rem', lineHeight: '1.6',
             overflow: 'hidden', display: '-webkit-box',
             WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', margin: 0,
-            overflowWrap: 'break-word',
+            overflowWrap: 'normal',
+            wordBreak: 'keep-all',
+            unicodeBidi: 'plaintext',
           }}>
             {stripHtml(post.content)}
           </p>
