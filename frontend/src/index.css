@@ -1753,6 +1753,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .sp-posts-frame-item {
+  text-decoration: none;
   background: var(--clr-bg);
   border: 1px solid var(--clr-border);
   border-radius: var(--radius-md);
@@ -1766,6 +1767,12 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: space-between;
   gap: .75rem;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.sp-posts-frame-item:hover {
+  background: var(--clr-surface);
+  border-color: var(--clr-accent);
 }
 
 .sp-posts-frame-item-title {

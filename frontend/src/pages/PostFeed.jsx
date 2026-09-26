@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import client from '../api/client'
 import InstaPostCard from '../components/InstaPostCard'
 
@@ -43,12 +44,14 @@ export default function PostFeed() {
             ) : (
               <ul className="sp-posts-frame-list">
                 {posts.map((post) => (
-                  <li key={post.id} className="sp-posts-frame-item">
-                    <div className="sp-posts-frame-item-title">{post.title}</div>
-                    <span className="sp-posts-frame-item-meta">
-                      <i className="bi bi-eye me-1" />
-                      {Number(post.view_count || 0).toLocaleString('fa-IR')} بازدید
-                    </span>
+                  <li key={post.id}>
+                    <Link to={`/posts/${post.id}`} className="sp-posts-frame-item">
+                      <div className="sp-posts-frame-item-title">{post.title}</div>
+                      <span className="sp-posts-frame-item-meta">
+                        <i className="bi bi-eye me-1" />
+                        {Number(post.view_count || 0).toLocaleString('fa-IR')} بازدید
+                      </span>
+                    </Link>
                   </li>
                 ))}
               </ul>
