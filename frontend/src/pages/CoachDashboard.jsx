@@ -188,7 +188,7 @@ export default function CoachDashboard() {
         {user.role === 'coach' && (
           <section className="sp-card p-4 mb-4" aria-labelledby="connection-requests-title">
             <div className="d-flex align-items-center justify-content-between gap-3 mb-2">
-              <h3 id="connection-requests-title" className="h5 mb-0">درخواست‌های ارتباط آنلاین</h3>
+              <h3 id="connection-requests-title" className="h5 mb-0">پیام‌های کاربران</h3>
               <span className="sp-view-count">
                 <i className="bi bi-chat-dots" /> {contactMessages.length.toLocaleString('fa-IR')}
               </span>
@@ -212,7 +212,7 @@ export default function CoachDashboard() {
                         <i className="bi bi-reply me-1" /> پاسخ به ایمیل
                       </a>
                     </div>
-                    <p className="mb-0 mt-2" style={{ whiteSpace: 'pre-wrap', color: 'var(--clr-text-2)' }}>
+                    <p className="mb-0 mt-2" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'normal', wordBreak: 'normal', textAlign: 'justify', color: 'var(--clr-text-2)' }}>
                       {contactMessage.message}
                     </p>
                   </article>

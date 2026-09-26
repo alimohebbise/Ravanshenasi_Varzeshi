@@ -48,11 +48,21 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    recipient_coach_name = serializers.SerializerMethodField()
 
     class Meta:
         model = ContactMessage
-        fields = ["id", "name", "email", "subject", "message", "recipient_coach", "created_at"]
+        fields = [
+            "id", "name", "email", "subject", "message",
+            "recipient_coach", "recipient_coach_name", "created_at",
+        ]
         read_only_fields = ["id", "created_at"]
+
+    def get_recipient_coach_name(self, contact_message):
+        coach = contact_message.recipient_coach
+        if not coach:
+            return None
+        return coach.get_full_name() or coach.username
 
     def validate_recipient_coach(self, coach):
         if coach and not CoachApplication.objects.filter(user=coach, status="approved").exists():

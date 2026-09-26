@@ -45,6 +45,16 @@ class CoachContactMessageListView(generics.ListAPIView):
         return ContactMessage.objects.filter(recipient_coach=self.request.user).select_related("user")
 
 
+class AdminContactMessageListView(generics.ListAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.role != "owner":
+            raise PermissionDenied("Only site admins can view all user messages.")
+        return ContactMessage.objects.select_related("user", "recipient_coach").all()
+
+
 def serve_html(request, path):
     file_path = os.path.join(settings.BASE_DIR.parent, path)
     if os.path.exists(file_path) and file_path.endswith(".html"):

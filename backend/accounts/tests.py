@@ -233,3 +233,43 @@ class OnlineConnectionMessageTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertFalse(ContactMessage.objects.exists())
+
+
+class AdminUserMessageInboxTests(APITestCase):
+    url = "/api/auth/contact-messages/"
+
+    def setUp(self):
+        self.owner = User.objects.create_user(username="owner", password="strongpass123", role="owner")
+        self.coach = User.objects.create_user(
+            username="coach", password="strongpass123", role="coach",
+            first_name="Sara", last_name="Ahmadi",
+        )
+        ContactMessage.objects.create(
+            name="User One",
+            email="user@example.com",
+            subject="Coaching question",
+            message="I would like to connect.",
+            recipient_coach=self.coach,
+        )
+
+    def test_owner_can_review_all_user_messages_and_recipients(self):
+        self.client.force_authenticate(self.owner)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["recipient_coach_name"], "Sara Ahmadi")
+
+    def test_non_owner_cannot_review_all_user_messages(self):
+        athlete = User.objects.create_user(username="athlete", password="strongpass123")
+        self.client.force_authenticate(athlete)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_anonymous_user_cannot_review_all_user_messages(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

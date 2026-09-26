@@ -13,6 +13,8 @@ export default function AdminPanel() {
   const [articles, setArticles] = useState([])
   const [posts, setPosts] = useState([])
   const [coaches, setCoaches] = useState([])
+  const [contactMessages, setContactMessages] = useState([])
+  const [contactMessagesError, setContactMessagesError] = useState(false)
   const [loading, setLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(null)
   const [statusFilter, setStatusFilter] = useState('pending')
@@ -38,6 +40,12 @@ export default function AdminPanel() {
     } else if (tab === 'coaches') {
       client.get('/coaches/approved/')
         .then(({ data }) => setCoaches(data))
+        .finally(() => setLoading(false))
+    } else if (tab === 'messages') {
+      setContactMessagesError(false)
+      client.get('/auth/contact-messages/')
+        .then(({ data }) => setContactMessages(data))
+        .catch(() => setContactMessagesError(true))
         .finally(() => setLoading(false))
     }
   }, [tab, statusFilter])
@@ -70,7 +78,8 @@ export default function AdminPanel() {
         {/* Tabs */}
         <div className="sp-tabs">
           {[
-            { key: 'applications', icon: 'bi-person-check', label: 'درخواست‌ها' },
+            { key: 'applications', icon: 'bi-person-check', label: 'درخواست‌های مربی' },
+            { key: 'messages',     icon: 'bi-chat-dots',     label: 'پیام‌های کاربران' },
             { key: 'coaches',      icon: 'bi-people',        label: 'مربیان' },
             { key: 'posts',        icon: 'bi-journal-text',  label: 'پست‌ها' },
             { key: 'articles',     icon: 'bi-newspaper',     label: 'مقالات' },
@@ -155,6 +164,50 @@ export default function AdminPanel() {
               </div>
             )}
           </>
+        )}
+
+        {tab === 'messages' && (
+          loading ? (
+            <div className="sp-loading"><div className="sp-spinner" /></div>
+          ) : contactMessagesError ? (
+            <div className="sp-alert error" role="alert">بارگذاری پیام‌ها انجام نشد. دوباره تلاش کنید.</div>
+          ) : contactMessages.length === 0 ? (
+            <div className="sp-empty">
+              <div className="sp-empty-icon"><i className="bi bi-chat-square-text" /></div>
+              <p>پیامی دریافت نشده است.</p>
+            </div>
+          ) : (
+            <div>
+              {contactMessages.map((contactMessage) => (
+                <article key={contactMessage.id} className="sp-card p-3 p-md-4 mb-3">
+                  <div className="d-flex align-items-start justify-content-between flex-wrap gap-3">
+                    <div>
+                      <h3 className="h6 mb-1">{contactMessage.subject}</h3>
+                      <div style={{ color: 'var(--clr-text-muted)', fontSize: '.84rem' }}>
+                        {contactMessage.name} · {contactMessage.email} · {new Date(contactMessage.created_at).toLocaleDateString('fa-IR')}
+                      </div>
+                    </div>
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="sp-status approved">
+                        {contactMessage.recipient_coach_name
+                          ? `مربی: ${contactMessage.recipient_coach_name}`
+                          : 'مدیر سایت'}
+                      </span>
+                      <a
+                        className="btn btn-sm btn-outline-primary"
+                        href={`mailto:${contactMessage.email}?subject=${encodeURIComponent(`پاسخ: ${contactMessage.subject}`)}`}
+                      >
+                        <i className="bi bi-reply me-1" />پاسخ
+                      </a>
+                    </div>
+                  </div>
+                  <p className="mb-0 mt-3" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'normal', wordBreak: 'normal', textAlign: 'justify' }}>
+                    {contactMessage.message}
+                  </p>
+                </article>
+              ))}
+            </div>
+          )
         )}
 
         {/* Coaches */}

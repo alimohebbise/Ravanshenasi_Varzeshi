@@ -101,11 +101,12 @@ class CoachApplicationReviewTests(APITestCase):
     def test_owner_can_list_applications(self):
         self.client.force_authenticate(self.owner)
 
-        response = self.client.get("/api/coaches/applications/")
+        response = self.client.get("/api/coaches/applications/?status=pending")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["username"], "athlete1")
+        self.assertEqual(response.data[0]["status"], "pending")
 
     def test_approve_promotes_user_to_coach(self):
         self.client.force_authenticate(self.owner)

@@ -1588,7 +1588,10 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Rendered post content (sanitized HTML) */
 .sp-rich-content {
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .sp-rich-content img {
@@ -1711,7 +1714,10 @@ h1, h2, h3, h4, h5, h6 {
   font-size: .88rem;
   line-height: 1.8;
   color: var(--clr-text-2);
-  overflow-wrap: break-word;
+  overflow-wrap: normal;
+  word-break: normal;
+  text-align: justify;
+  text-justify: inter-word;
 }
 
 .sp-insta-caption strong { color: var(--clr-text); }
