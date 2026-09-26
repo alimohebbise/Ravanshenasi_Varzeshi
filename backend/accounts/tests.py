@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
+from accounts.models import ContactMessage
+from coaches.models import CoachApplication
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -140,3 +142,94 @@ class MeTests(APITestCase):
         self.assertEqual(response.data["username"], "athlete1")
         self.assertEqual(response.data["first_name"], "Ali")
         self.assertEqual(response.data["role"], "athlete")
+
+
+class OnlineConnectionMessageTests(APITestCase):
+    url = "/api/auth/online-connection/"
+
+    def create_approved_coach(self, username):
+        coach = User.objects.create_user(username=username, password="strongpass123", role="coach")
+        CoachApplication.objects.create(
+            user=coach,
+            first_name="Test",
+            last_name="Coach",
+            national_id=f"{coach.pk:010}",
+            date_of_birth="1990-01-01",
+            educational_documents="education.pdf",
+            digital_signature="signature.pdf",
+            status="approved",
+        )
+        return coach
+
+    def valid_payload(self):
+        return {
+            "name": "Ali Rezaei",
+            "email": "ali@example.com",
+            "subject": "Account question",
+            "message": "Please help me update my account.",
+        }
+
+    def test_anonymous_user_can_submit_a_message_for_admin_review(self):
+        response = self.client.post(self.url, self.valid_payload(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        contact_message = ContactMessage.objects.get()
+        self.assertEqual(contact_message.email, "ali@example.com")
+        self.assertIsNone(contact_message.user)
+        self.assertIsNone(contact_message.recipient_coach)
+        self.assertFalse(contact_message.is_resolved)
+
+    def test_authenticated_user_is_associated_with_message(self):
+        user = User.objects.create_user(username="athlete", password="strongpass123")
+        self.client.force_authenticate(user)
+
+        response = self.client.post(self.url, self.valid_payload(), format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(ContactMessage.objects.get().user, user)
+
+    def test_message_can_be_addressed_to_an_approved_coach(self):
+        coach = self.create_approved_coach("coach1")
+        payload = self.valid_payload()
+        payload["recipient_coach"] = coach.pk
+
+        response = self.client.post(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(ContactMessage.objects.get().recipient_coach, coach)
+
+    def test_unapproved_coach_cannot_receive_connection_requests(self):
+        coach = User.objects.create_user(username="pending", password="strongpass123", role="coach")
+        payload = self.valid_payload()
+        payload["recipient_coach"] = coach.pk
+
+        response = self.client.post(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(ContactMessage.objects.exists())
+
+    def test_coach_inbox_only_returns_messages_addressed_to_that_coach(self):
+        coach = self.create_approved_coach("coach1")
+        other_coach = self.create_approved_coach("coach2")
+        first_payload = self.valid_payload()
+        first_payload["recipient_coach"] = coach.pk
+        second_payload = self.valid_payload()
+        second_payload["recipient_coach"] = other_coach.pk
+        self.client.post(self.url, first_payload, format="json")
+        self.client.post(self.url, second_payload, format="json")
+        self.client.force_authenticate(coach)
+
+        response = self.client.get("/api/auth/contact-messages/received/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["recipient_coach"], coach.pk)
+
+    def test_invalid_email_is_rejected(self):
+        payload = self.valid_payload()
+        payload["email"] = "not-an-email"
+
+        response = self.client.post(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(ContactMessage.objects.exists())

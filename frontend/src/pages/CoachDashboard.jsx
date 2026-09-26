@@ -12,6 +12,8 @@ export default function CoachDashboard() {
   const navigate = useNavigate()
   const isCoach = user?.role === 'coach' || user?.role === 'owner'
   const [posts, setPosts] = useState([])
+  const [contactMessages, setContactMessages] = useState([])
+  const [contactMessagesLoading, setContactMessagesLoading] = useState(true)
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -39,6 +41,10 @@ export default function CoachDashboard() {
     client.get('/posts/tags/')
       .then(({ data }) => setTagSuggestions(data.map((t) => t.name)))
       .catch(() => {})
+    client.get('/auth/contact-messages/received/')
+      .then(({ data }) => setContactMessages(data))
+      .catch(() => setContactMessages([]))
+      .finally(() => setContactMessagesLoading(false))
   }, [user, isCoach, loadPosts])
 
   function openCreate() {
@@ -178,6 +184,43 @@ export default function CoachDashboard() {
             </div>
           </div>
         </div>
+
+        {user.role === 'coach' && (
+          <section className="sp-card p-4 mb-4" aria-labelledby="connection-requests-title">
+            <div className="d-flex align-items-center justify-content-between gap-3 mb-2">
+              <h3 id="connection-requests-title" className="h5 mb-0">درخواست‌های ارتباط آنلاین</h3>
+              <span className="sp-view-count">
+                <i className="bi bi-chat-dots" /> {contactMessages.length.toLocaleString('fa-IR')}
+              </span>
+            </div>
+            {contactMessagesLoading ? (
+              <div className="sp-loading py-3"><div className="sp-spinner" /></div>
+            ) : contactMessages.length === 0 ? (
+              <p className="mb-0" style={{ color: 'var(--clr-text-muted)' }}>درخواستی دریافت نشده است.</p>
+            ) : (
+              <div>
+                {contactMessages.map((contactMessage) => (
+                  <article key={contactMessage.id} className="py-3 border-bottom">
+                    <div className="d-flex align-items-start justify-content-between flex-wrap gap-2">
+                      <div>
+                        <h4 className="h6 mb-1">{contactMessage.subject}</h4>
+                        <div style={{ color: 'var(--clr-text-muted)', fontSize: '.82rem' }}>
+                          {contactMessage.name} · {new Date(contactMessage.created_at).toLocaleDateString('fa-IR')}
+                        </div>
+                      </div>
+                      <a className="btn btn-sm btn-outline-primary" href={`mailto:${contactMessage.email}`}>
+                        <i className="bi bi-reply me-1" /> پاسخ به ایمیل
+                      </a>
+                    </div>
+                    <p className="mb-0 mt-2" style={{ whiteSpace: 'pre-wrap', color: 'var(--clr-text-2)' }}>
+                      {contactMessage.message}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Tag filter */}
         {!loading && topTags.length > 0 && (

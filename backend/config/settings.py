@@ -75,6 +75,10 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "accounts.authentication.LenientJWTAuthentication",
     ),
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "10/hour",
+        "user": "30/hour",
+    },
 }
 
 SIMPLE_JWT = {

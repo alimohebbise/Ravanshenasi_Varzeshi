@@ -2,9 +2,12 @@ from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.conf import settings
 from rest_framework import generics, permissions
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import RegisterSerializer, UserSerializer
+from .models import ContactMessage
+from .serializers import ContactMessageSerializer, RegisterSerializer, UserSerializer
 import os
 
 User = get_user_model()
@@ -20,6 +23,26 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(UserSerializer(request.user).data)
+
+
+class OnlineConnectionMessageView(generics.CreateAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [permissions.AllowAny]
+    throttle_classes = [AnonRateThrottle, UserRateThrottle]
+
+    def perform_create(self, serializer):
+        user = self.request.user if self.request.user.is_authenticated else None
+        serializer.save(user=user)
+
+
+class CoachContactMessageListView(generics.ListAPIView):
+    serializer_class = ContactMessageSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        if self.request.user.role != "coach":
+            raise PermissionDenied("Only coaches can view received connection requests.")
+        return ContactMessage.objects.filter(recipient_coach=self.request.user).select_related("user")
 
 
 def serve_html(request, path):

@@ -90,9 +90,13 @@ DB_PORT=5436
 | POST | /api/auth/login/ | Login (returns JWT) |
 | POST | /api/auth/refresh/ | Refresh JWT |
 | GET | /api/auth/me/ | Current user info |
+| POST | /api/auth/online-connection/ | Send a message to the site admin or an approved coach |
+| GET | /api/auth/contact-messages/received/ | Coach connection-request inbox (authenticated coaches only) |
 | GET | /api/articles/?lang=fa | Article list with view counts |
 | POST | /api/articles/<slug>/view/ | Track article view |
 | POST | /api/coaches/apply/ | Submit coach application |
 | GET | /api/coaches/my-application/ | My application status |
 | GET | /api/coaches/applications/ | All applications (owner only) |
 | POST | /api/coaches/applications/<id>/review/ | Approve/reject (owner only) |
+
+Site-admin messages are available in Django Admin under **Contact messages**. Coach-directed messages appear in that coach's dashboard.

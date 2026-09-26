@@ -56,21 +56,32 @@ export default function Navbar() {
           {/* Desktop links */}
           <ul className="sp-nav-links">
             <li>
-              <Link className="sp-nav-link" to="/articles">
-                <i className="bi bi-newspaper" />
-                مقالات
-              </Link>
-            </li>
-            <li>
-              <Link className="sp-nav-link" to="/posts">
-                <i className="bi bi-grid-3x3-gap" />
-                پست‌ها
-              </Link>
+              <NavDropdown
+                trigger={
+                  <span>
+                    <i className="bi bi-journal-text" />
+                    مطالب
+                  </span>
+                }
+              >
+                <Link className="sp-dropdown-link" to="/articles">
+                  <i className="bi bi-newspaper" /> مقالات
+                </Link>
+                <Link className="sp-dropdown-link" to="/posts">
+                  <i className="bi bi-grid-3x3-gap" /> پست‌های مربیان
+                </Link>
+              </NavDropdown>
             </li>
             <li>
               <Link className="sp-nav-link" to="/coaches">
                 <i className="bi bi-people" />
                 مربیان
+              </Link>
+            </li>
+            <li>
+              <Link className="sp-nav-link" to="/online-connection">
+                <i className="bi bi-chat-dots" />
+                ارتباط آنلاین
               </Link>
             </li>
             <li>
@@ -200,6 +211,7 @@ export default function Navbar() {
       {/* Mobile drawer */}
       <div className={`sp-mobile-nav ${mobileOpen ? 'open' : ''}`} dir="rtl">
         <ul className="sp-nav-links d-flex flex-column" style={{ gap: '.15rem' }}>
+          <div className="sp-mobile-section-label">مطالب</div>
           <li>
             <Link className="sp-nav-link" to="/articles" onClick={() => setMobileOpen(false)}>
               <i className="bi bi-newspaper" />
@@ -209,13 +221,19 @@ export default function Navbar() {
           <li>
             <Link className="sp-nav-link" to="/posts" onClick={() => setMobileOpen(false)}>
               <i className="bi bi-grid-3x3-gap" />
-              پست‌ها
+              پست‌های مربیان
             </Link>
           </li>
           <li>
             <Link className="sp-nav-link" to="/coaches" onClick={() => setMobileOpen(false)}>
               <i className="bi bi-people" />
               مربیان
+            </Link>
+          </li>
+          <li>
+            <Link className="sp-nav-link" to="/online-connection" onClick={() => setMobileOpen(false)}>
+              <i className="bi bi-chat-dots" />
+              ارتباط آنلاین
             </Link>
           </li>
 

@@ -1,5 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from coaches.models import CoachApplication
+from .models import ContactMessage
 
 User = get_user_model()
 
@@ -38,3 +40,21 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "phone_number", "first_name", "last_name", "role"]
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    recipient_coach = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.filter(role="coach"),
+        required=False,
+        allow_null=True,
+    )
+
+    class Meta:
+        model = ContactMessage
+        fields = ["id", "name", "email", "subject", "message", "recipient_coach", "created_at"]
+        read_only_fields = ["id", "created_at"]
+
+    def validate_recipient_coach(self, coach):
+        if coach and not CoachApplication.objects.filter(user=coach, status="approved").exists():
+            raise serializers.ValidationError("Only approved coaches can receive connection requests.")
+        return coach

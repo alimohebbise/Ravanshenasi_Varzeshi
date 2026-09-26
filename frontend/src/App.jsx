@@ -20,6 +20,7 @@ import MyOrders from './pages/MyOrders'
 import OrderDetail from './pages/OrderDetail'
 import CoachProducts from './pages/CoachProducts'
 import CoachSales from './pages/CoachSales'
+import OnlineConnection from './pages/OnlineConnection'
 
 export default function App() {
   return (
@@ -47,6 +48,8 @@ export default function App() {
         <Route path="/orders/:id" element={<OrderDetail />} />
         <Route path="/coach-products" element={<CoachProducts />} />
         <Route path="/coach-sales" element={<CoachSales />} />
+        <Route path="/online-connection" element={<OnlineConnection />} />
+        <Route path="/contact-admin" element={<Navigate to="/online-connection" replace />} />
         <Route path="*" element={<Navigate to="/articles" replace />} />
       </Routes>
     </>
