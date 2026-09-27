@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 from rest_framework import serializers
 from coaches.models import CoachApplication
 from .models import ContactMessage
@@ -43,20 +44,47 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ContactMessageSerializer(serializers.ModelSerializer):
+    recipient = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.filter(
+            Q(role="owner") | Q(role="coach", coach_application__status="approved")
+        ).distinct(),
+        required=False,
+        allow_null=True,
+    )
     recipient_coach = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.filter(role="coach"),
         required=False,
         allow_null=True,
     )
     recipient_coach_name = serializers.SerializerMethodField()
+    recipient_name = serializers.SerializerMethodField()
+    sender_name = serializers.SerializerMethodField()
+    replies = serializers.SerializerMethodField()
 
     class Meta:
         model = ContactMessage
         fields = [
-            "id", "name", "email", "subject", "message",
-            "recipient_coach", "recipient_coach_name", "created_at",
+            "id", "user", "name", "email", "subject", "message",
+            "recipient", "recipient_name", "recipient_coach", "recipient_coach_name",
+            "sender", "sender_name", "reply_to", "replies", "created_at",
         ]
-        read_only_fields = ["id", "created_at"]
+        read_only_fields = ["id", "user", "sender", "sender_name", "reply_to", "replies", "created_at"]
+
+    def get_replies(self, contact_message):
+        replies = contact_message.replies.select_related("sender").all()
+        return ContactMessageReplySerializer(replies, many=True).data
+
+    def get_recipient_name(self, contact_message):
+        recipient = contact_message.recipient or contact_message.recipient_coach
+        if not recipient:
+            return None
+        return recipient.get_full_name() or recipient.username
+
+    def get_sender_name(self, contact_message):
+        sender = contact_message.sender or contact_message.user
+        if not sender:
+            return contact_message.name
+        return sender.get_full_name() or sender.username
 
     def get_recipient_coach_name(self, contact_message):
         coach = contact_message.recipient_coach
@@ -68,3 +96,42 @@ class ContactMessageSerializer(serializers.ModelSerializer):
         if coach and not CoachApplication.objects.filter(user=coach, status="approved").exists():
             raise serializers.ValidationError("Only approved coaches can receive connection requests.")
         return coach
+
+    def validate(self, data):
+        recipient = data.get("recipient")
+        recipient_coach = data.get("recipient_coach")
+        if recipient and recipient_coach and recipient != recipient_coach:
+            raise serializers.ValidationError({"recipient": "Choose only one message recipient."})
+        if recipient and recipient.role == "coach" and not CoachApplication.objects.filter(
+            user=recipient, status="approved"
+        ).exists():
+            raise serializers.ValidationError({"recipient": "Only approved coaches can receive messages."})
+        request = self.context.get("request")
+        if request and request.user.is_authenticated and recipient == request.user:
+            raise serializers.ValidationError({"recipient": "You cannot send a message to yourself."})
+        return data
+
+
+class ContactMessageReplySerializer(serializers.ModelSerializer):
+    sender_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ContactMessage
+        fields = ["id", "message", "sender", "sender_name", "created_at"]
+
+    def get_sender_name(self, reply):
+        sender = reply.sender
+        if not sender:
+            return reply.name
+        return sender.get_full_name() or sender.username
+
+
+class MessageRecipientSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ["id", "name", "role"]
+
+    def get_name(self, user):
+        return user.get_full_name() or user.username

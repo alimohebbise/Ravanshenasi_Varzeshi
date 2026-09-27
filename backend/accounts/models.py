@@ -59,6 +59,27 @@ class ContactMessage(models.Model):
         on_delete=models.SET_NULL,
         related_name="received_contact_messages",
     )
+    sender = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="sent_online_messages",
+    )
+    recipient = models.ForeignKey(
+        User,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="received_online_messages",
+    )
+    reply_to = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="replies",
+    )
     name = models.CharField(max_length=150)
     email = models.EmailField()
     subject = models.CharField(max_length=150)

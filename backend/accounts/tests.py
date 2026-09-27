@@ -273,3 +273,144 @@ class AdminUserMessageInboxTests(APITestCase):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class OnlineConversationTests(APITestCase):
+    def setUp(self):
+        self.athlete = User.objects.create_user(username="athlete", password="strongpass123")
+        self.other_athlete = User.objects.create_user(username="other", password="strongpass123")
+        self.owner = User.objects.create_user(username="owner", password="strongpass123", role="owner")
+        self.coach = User.objects.create_user(
+            username="coach", password="strongpass123", role="coach", first_name="Sara", last_name="Ahmadi"
+        )
+        CoachApplication.objects.create(
+            user=self.coach,
+            first_name="Sara",
+            last_name="Ahmadi",
+            national_id="1234567890",
+            date_of_birth="1990-01-01",
+            educational_documents="education.pdf",
+            digital_signature="signature.pdf",
+            status="approved",
+        )
+
+    def create_thread(self, user, recipient, subject="Coaching question"):
+        return ContactMessage.objects.create(
+            user=user,
+            sender=user,
+            recipient=recipient,
+            recipient_coach=recipient if recipient.role == "coach" else None,
+            name=user.username,
+            email=f"{user.username}@example.com",
+            subject=subject,
+            message="I would like to connect.",
+        )
+
+    def test_recipient_directory_lists_owners_and_approved_coaches(self):
+        pending = User.objects.create_user(username="pending", password="strongpass123", role="coach")
+
+        response = self.client.get("/api/auth/message-recipients/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        recipients = {item["id"]: item for item in response.data}
+        self.assertEqual(set(recipients), {self.owner.id, self.coach.id})
+        self.assertEqual(recipients[self.coach.id]["name"], "Sara Ahmadi")
+        self.assertNotIn(pending.id, recipients)
+
+    def test_authenticated_user_sees_sent_and_received_threads_only(self):
+        sent = self.create_thread(self.athlete, self.coach)
+        received = self.create_thread(self.other_athlete, self.athlete)
+        self.create_thread(self.other_athlete, self.coach, subject="Unrelated")
+        self.client.force_authenticate(self.athlete)
+
+        response = self.client.get("/api/auth/contact-messages/threads/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual({item["id"] for item in response.data}, {sent.id, received.id})
+
+    def test_message_submission_records_sender_and_selected_recipient(self):
+        self.client.force_authenticate(self.athlete)
+
+        response = self.client.post("/api/auth/online-connection/", {
+            "name": "Athlete",
+            "email": "athlete@example.com",
+            "subject": "Question",
+            "message": "Could you help?",
+            "recipient": self.coach.id,
+        }, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        message = ContactMessage.objects.get()
+        self.assertEqual(message.sender, self.athlete)
+        self.assertEqual(message.recipient, self.coach)
+        self.assertEqual(message.recipient_coach, self.coach)
+
+    def test_conversation_participants_can_reply_to_each_other(self):
+        thread = self.create_thread(self.athlete, self.coach)
+        self.client.force_authenticate(self.coach)
+
+        response = self.client.post(
+            f"/api/auth/contact-messages/{thread.id}/reply/",
+            {"message": "I can help with that."},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        coach_reply = ContactMessage.objects.get(reply_to=thread)
+        self.assertEqual(coach_reply.sender, self.coach)
+        self.assertEqual(coach_reply.recipient, self.athlete)
+
+        self.client.force_authenticate(self.athlete)
+        response = self.client.get("/api/auth/contact-messages/threads/")
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["replies"][0]["sender_name"], "Sara Ahmadi")
+
+        response = self.client.post(
+            f"/api/auth/contact-messages/{thread.id}/reply/",
+            {"message": "Thank you."},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        athlete_reply = ContactMessage.objects.get(reply_to=thread, sender=self.athlete)
+        self.assertEqual(athlete_reply.recipient, self.coach)
+
+    def test_nonparticipant_cannot_reply(self):
+        thread = self.create_thread(self.athlete, self.coach)
+        self.client.force_authenticate(self.other_athlete)
+
+        response = self.client.post(
+            f"/api/auth/contact-messages/{thread.id}/reply/",
+            {"message": "Intruding reply."},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(ContactMessage.objects.filter(reply_to=thread).exists())
+
+    def test_owner_sees_own_threads_and_can_reply_to_admin_messages(self):
+        received = self.create_thread(self.athlete, self.owner)
+        sent = self.create_thread(self.owner, self.coach)
+        self.create_thread(self.other_athlete, self.coach, subject="Coach-only thread")
+        legacy = ContactMessage.objects.create(
+            name="Visitor",
+            email="visitor@example.com",
+            subject="Legacy admin message",
+            message="A previous contact request.",
+        )
+        self.client.force_authenticate(self.owner)
+
+        response = self.client.get("/api/auth/contact-messages/threads/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual({item["id"] for item in response.data}, {received.id, sent.id, legacy.id})
+
+        response = self.client.post(
+            f"/api/auth/contact-messages/{received.id}/reply/",
+            {"message": "I will look into this."},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        reply = ContactMessage.objects.get(reply_to=received)
+        self.assertEqual(reply.sender, self.owner)
+        self.assertEqual(reply.recipient, self.athlete)
