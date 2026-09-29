@@ -1785,6 +1785,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   color: var(--clr-text);
   flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .sp-posts-frame-item-meta {

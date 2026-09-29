@@ -1,0 +1,5 @@
+Posts frame text fix
+
+Post titles in the posts frame could exceed the available row width and become clipped. The title flex item now has a zero minimum width and can wrap long content, keeping text visible inside the frame.
+
+Validation: `npm run build` passed from the frontend directory. Vite emitted a chunk-size warning.
